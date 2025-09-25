@@ -36,7 +36,7 @@ struct LoginView: View {
                 
                 
                 VStack(alignment: .center) {
-                    Text("ExpenseAI")
+                    Text("AI Expense Tracker")
                         .font(.system(size: 21, weight: .bold))
                         .foregroundColor(.black)
                     
@@ -95,7 +95,7 @@ struct LoginView: View {
                 } else {
                     Text("SIGN IN")
                         .font(.title2)
-                        .frame(maxWidth: .infinity).padding()
+                        .frame(maxWidth: .infinity,maxHeight: 20).padding()
                         .cornerRadius(10)
                 }
             }

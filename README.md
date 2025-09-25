@@ -214,6 +214,10 @@ http://localhost:8080/api/user/4
 3. git commit -m "Removed file that shouldn't be tracked"
 4. recheck git status :  git status 
 
+### Commit Emoji :
+1. https://gist.github.com/parmentf/035de27d6ed1dce0b36a
+2. https://gitmoji.dev/
+
 ## Reference 
 1. https://www.w3schools.com/sql/sql_insert.asp
 2. https://www.rameshfadatare.com/spring-boot-tutorial/spring-boot-crud-example-with-postgresql/
