@@ -10,10 +10,15 @@ import SwiftUI
 
 struct LoginView: View {
     
+    var onCancel: () -> Void
+    var onSuccess: () -> Void
+    
+    @State private var isLoading = false
+    @State private var error: String?
     @State private var email            : String = ""
     @State private var password         : String = ""
     @State private var isPasswordVisible: Bool = false
-
+    
     var body: some View {
         VStack(spacing: 20) {
             Spacer()
@@ -28,19 +33,19 @@ struct LoginView: View {
                 .background(Color.blue)
                 .cornerRadius(7)
                 .frame(width: 100,height: 100)
-              
-               
+                
+                
                 VStack(alignment: .center) {
                     Text("ExpenseAI")
                         .font(.system(size: 21, weight: .bold))
                         .foregroundColor(.black)
-                        
+                    
                     Text("Smart Financial Tracking")
                         .font(.subheadline)
                         .foregroundColor(.gray)
                 }
                 
-               
+                
             }
             .padding(.bottom, 40)
             
@@ -75,19 +80,27 @@ struct LoginView: View {
             .padding()
             .background(Color(.systemGray6))
             .cornerRadius(10)
-            
-            // Sign In Button
-            Button(action: {
-                // Handle sign in
-            }) {
-                Text("SIGN IN")
-                    .font(.title2)
-                    .frame(maxWidth: .infinity,maxHeight: 30)
-                    .padding()
-                    .background(Color.blue)
-                    .foregroundColor(.white)
-                    .cornerRadius(10)
+            if let error {
+                Text(error).foregroundColor(.red).font(.footnote)
             }
+            // Sign In Button
+            Button {
+                Task {
+                    await signIn()
+                }
+            } label: {
+                if isLoading {
+                    ProgressView()
+                        .frame(maxWidth: .infinity).padding()
+                } else {
+                    Text("SIGN IN")
+                        .font(.title2)
+                        .frame(maxWidth: .infinity).padding()
+                        .cornerRadius(10)
+                }
+            }
+            .buttonStyle(.borderedProminent)
+            .disabled(email.isEmpty || password.isEmpty || isLoading)
             .padding(.top, 10)
             
             // Divider
@@ -106,6 +119,7 @@ struct LoginView: View {
             // Google Sign In
             Button(action: {
                 // Handle Google login
+                print("Handle Google login")
             }) {
                 HStack {
                     Image(systemName: "g.circle.fill")
@@ -128,8 +142,18 @@ struct LoginView: View {
         .padding(.horizontal, 24)
         .frame(maxHeight: .infinity, alignment: .center)
     }
+    // Simulated auth — replace with your API call
+    private func signIn() async {
+        error = nil
+        isLoading = true
+        defer { isLoading = false }
+        try? await Task.sleep(nanoseconds: 800_000_000)
+        if email.lowercased().hasSuffix("12@ex.com") && password.count >= 4 {
+            onSuccess()
+        } else {
+            error = "Invalid email or password."
+        }
+    }
 }
 
-#Preview {
-    LoginView()
-}
+

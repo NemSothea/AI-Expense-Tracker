@@ -12,6 +12,9 @@ struct ContentView: View {
     @State var vm = LogListViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    // ⬇️ added
+    var onLogout: () -> Void = {}
+    
     
     var body: some View {
 #if os(macOS)
@@ -43,10 +46,10 @@ struct ContentView: View {
                 Label("AI Assistant", systemImage: "waveform")
             }.tag(1)
             NavigationStack {
-                LoginView()
+                AccountView(onLogout: onLogout)
             }
             .tabItem {
-                    Label("Profile", systemImage: "person.circle")
+                Label("Profile", systemImage: "person.circle")
             }.tag(2)
         }
     }
@@ -60,7 +63,7 @@ struct ContentView: View {
                     Label("AI Assistant", systemImage: "waveform")
                 }
                 
-                NavigationLink(destination:  LoginView()) {
+                NavigationLink(destination:  AccountView(onLogout: onLogout)) {
                     Label("Account", systemImage: "person.circle")
                 }
             }

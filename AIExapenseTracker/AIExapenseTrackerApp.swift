@@ -23,7 +23,7 @@ struct AIExapenseTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             
-            ContentView()
+            RootView()
             #if os(macOS)
                 .frame(minWidth:729, minHeight: 480)
             #endif
