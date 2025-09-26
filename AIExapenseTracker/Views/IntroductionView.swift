@@ -73,7 +73,7 @@ struct IntroductionView: View {
                 .cornerRadius(10)
                 .frame(width: 64,height: 64)
                 
-                Text("ExpenseAI")
+                Text("AI Expense Tracker")
                     .font(.largeTitle.bold())
                     .padding(.bottom, 8)
                 
