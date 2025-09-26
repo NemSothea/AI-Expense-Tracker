@@ -1,229 +1,376 @@
-# AI Expense Tracker Mobile  README
-## Project Overview
-AI Expense Tracker is an intelligent expense management application that uses artificial intelligence to simplify financial tracking. The application features a Spring Boot backend with a PostgreSQL database and a native iOS mobile application with AI capabilities for receipt scanning, voice input, and intelligent categorization.
+# AI Expense Tracker 📱💰
 
-### Features
-#### Core Features
+<div align="center">
 
-- **Multi-input Expense Logging**: Manual entry and AI-powered OCR receipt scanning
-- **AI-Powered Categorization**: Automatic categorization of expenses using machine learning
-- **Voice Input**: Create expenses through natural language voice commands
-- **Expense Management**: Full CRUD operations (Create, Read, Update, Delete)
-- **Advanced Filtering & Sorting**: Filter by categories and sort by date, amount, or name
-- **Data Visualization**: Interactive dashboard with spending charts and insights
-- **User Authentication**: Secure login with email/password and Google OAuth
-- **Cross-Platform Sync**: Cloud synchronization between iOS app and web dashboard
+![Spring Boot](https://img.shields.io/badge/Spring_Boot-6DB33F?style=for-the-badge&logo=spring-boot&logoColor=white)
+![Swift](https://img.shields.io/badge/Swift-FA7343?style=for-the-badge&logo=swift&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/PostgreSQL-336791?style=for-the-badge&logo=postgresql&logoColor=white)
+![React](https://img.shields.io/badge/React-20232A?style=for-the-badge&logo=react&logoColor=61DAFB)
 
-#### Technical Features
-- Spring Boot backend with JWT authentication
-- PostgreSQL database with optimized queries
-- RESTful API design
-- iOS app built with SwiftUI
-- Vision framework for receipt scanning
-- Voice recognition for hands-free expense creation
-- Charts and data visualization
-- Secure credential storage using Keychain
+**An intelligent expense management application powered by AI**
 
-#### Team Members & Responsibilities
-- **Sothea:** Project Lead, iOS Developer & Backend Developer
+[Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Demo](#-demo) • [Team](#-team)
 
-    - iOS app architecture and development
-    - Spring Boot REST API development
-    - Camera/OCR integration
-    - API communication and team coordination
+</div>
 
-- **Pisey:** Database Architect
+## 🚀 Overview
 
-    - PostgreSQL database design and management
-    - Data integrity and query optimization
-    - Database performance tuning
+AI Expense Tracker is a comprehensive financial management solution that leverages artificial intelligence to simplify expense tracking. The application features a robust Spring Boot backend, native iOS mobile app, and responsive web dashboard.
 
-- **Seyha:** UI/UX Designer & Frontend Developer
+### 🎯 Key Highlights
+- **AI-Powered**: Automatic receipt scanning and expense categorization
+- **Multi-Platform**: iOS app + Web dashboard with real-time sync
+- **Voice Control**: Hands-free expense creation via voice commands
+- **Smart Analytics**: Interactive charts and spending insights
 
-    - Application UI/UX design
-    - Web dashboard development
-    - Frontend implementation
+## ✨ Features
 
-- **Srey Nich:** Documentation Lead
+### 🤖 Core Capabilities
+| Feature | Description | Status |
+|---------|-------------|---------|
+| 📝 Manual Expense Entry | Traditional form-based expense logging | ✅ Complete |
+| 📷 Receipt OCR Scanning | AI-powered receipt scanning with automatic data extraction | ✅ Complete |
+| 🎤 Voice Input | Natural language expense creation via voice commands | ✅ Complete |
+| 🏷️ AI Categorization | Machine learning-based automatic expense categorization | ✅ Complete |
+| 📊 Data Visualization | Interactive charts and spending analytics | ✅ Complete |
+| 🔐 Secure Authentication | JWT + OAuth2 with role-based access control | ✅ Complete |
 
-    - Documentation coordination
-    - Presentation slide creation
-    - Demo preparation
-    - Coordinating documentation efforts
+### 🔧 Technical Features
+- **Backend**: Spring Boot with RESTful APIs
+- **Database**: PostgreSQL with optimized queries
+- **Mobile**: Native iOS app built with SwiftUI
+- **Web**: React dashboard with Tailwind CSS
+- **Security**: JWT authentication with secure credential storage
 
-#### Project Process flow
+## 🏗️ System Architecture
 
-#### Installation & Setup
-##### Prerequisites
-- Java 21 or later
-- PostgreSQL 12 or later
-- Xcode 13 or later
-- iOS 16 or later
-- Maven
-
-### Backend Setup
-- Clone the repository
-- Navigate to the backend directory: cd backend
-- Configure database connection in application.properties
-- Run the application: mvn spring-boot:run
-
-### Database Setup
-- Create a PostgreSQL database named `aiexpensedb`
-
-- Create a tales
 ```
+┌─────────────────┐    ┌──────────────────┐    ┌─────────────────┐
+│   iOS Mobile    │ ◄──│  Spring Boot     │ ──►│  PostgreSQL     │
+│    (SwiftUI)    │    │   Backend API    │    │   Database      │
+└─────────────────┘    └──────────────────┘    └─────────────────┘
+         │                       │
+         │                       │
+         ▼                       ▼
+┌─────────────────┐    ┌──────────────────┐
+│   Web Dashboard │    │  AI Services     │
+│    (React)      │    │ (OCR, ML, Voice) │
+└─────────────────┘    └──────────────────┘
+```
+
+## 📥 Installation
+
+### Prerequisites
+- **Java 21+**
+- **PostgreSQL 12+**
+- **Xcode 15+** (for iOS development)
+- **Node.js 18+** (for web dashboard)
+- **Maven 3.6+**
+
+### 🗄️ Database Setup
+
+1. **Create Database**:
+```sql
+CREATE DATABASE aiexpensedb;
+```
+
+2. **Create Users Table**:
+```sql
 CREATE TABLE users (
-    id INTEGER GENERATED BY DEFAULT AS IDENTITY PRIMARY KEY,
-    username TEXT NOT NULL,
-    email TEXT NOT NULL,
-    password TEXT NOT NULL,
-    isactive BOOLEAN DEFAULT true
+    id SERIAL PRIMARY KEY,
+    name VARCHAR(20) NOT NULL,
+    email VARCHAR(255) NOT NULL UNIQUE,
+    password VARCHAR(255) NOT NULL,
+    contact_number VARCHAR(10) UNIQUE,
+    role VARCHAR(50),
+    enabled BOOLEAN DEFAULT TRUE,
+    
+    -- Constraints
+    CHECK (char_length(name) >= 2 AND char_length(name) <= 20),
+    CHECK (char_length(password) >= 5),
+    CHECK (contact_number ~ '^[0-9]{10}$')
 );
 ```
-- Check the table uses
-`select * from users;`
 
+### ⚙️ Backend Setup
 
-### iOS App Setup
+```bash
+# Clone the repository
+git clone https://github.com/NemSothea/AIExpenseTrackerBackEnd.git
+cd AIExpenseTrackerBackEnd
 
-#### Prerequisites
-- Xcode 15.0 or later
-- iOS 16.0 or later / macOS 13.0 or later
-- Swift 5.9 or later
-- Apple Developer Account (for device testing)
+# Configure database connection
+# Edit src/main/resources/application.properties
 
-### API Documentation
-
-#### Prerequisites `Front End`
-http://localhost:8081/
-
-#### Prerequisites `Back End`
-
-#### Authentication Endpoints
-- POST /api/user/login  - User login <br/>
-http://localhost:8080/api/user/login
+# Run the application
+mvn spring-boot:run
 ```
-{
-    "password": "123@qwer",
-    "username": "test04"
-}
-{
-    eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ0ZXN0MDQiLCJpYXQiOjE3NTc3MzczOTQsImV4cCI6MTc1NzczNzYxMH0.14uQwstIFO5uBHf9ppQbCKLij_OGYccSZ6KPxzLnlyQ
-}
-  ```
-  - GET : /api/user/{id}<br/>
-http://localhost:8080/api/user/4
+
+### 🌐 Frontend Setup
+
+```bash
+# Clone frontend repository
+git clone https://github.com/NemSothea/AIExpenseTrackerFrontend.git
+cd AIExpenseTrackerFrontend
+
+# Create environment file
+echo "VITE_BASE_URL=https://localhost:5173" > .env
+
+# Install dependencies
+npm install
+
+# Start development server
+npm run dev
 ```
-{
-    // Empty Json
-}
-{
-    "id": 4,
-    "username": "test02",
-    "email": "123@gmail.com",
-    "password": "$2a$12$MpKg6QLivGl9eT3WyOU1Le7hhAqwcND4b8mtPsnDFGSVydCFAOzRC",
-    "isActive": true
-}
-  ```
 
-- POST /api/register <br/>
- http://localhost:8080/api/user/register
+### 📱 iOS App Setup
+
+1. **Open in Xcode**:
+```bash
+git clone https://github.com/NemSothea/AI-Expense-Tracker.git
+open AI-Expense-Tracker/AIExapenseTracker.xcodeproj
 ```
-{
-    "email": "123@gmail.com",
-    "isActive":true,
-    "password": "123@qwer",
-    "username": "test08"
-}
-{
-    "id": 8,
-    "username": "test08",
-    "email": "123@gmail.com",
-    "password": "$2a$12$z7Qb9EoEfMbsj7TgpBPcNul5E1xh.V3WxQL7A0/xoFm7cQ3bfWrn2",
-    "isActive": true
 
-} 
+2. **Configure API Endpoint**:
+   - Update `API_BASE_URL` in `NetworkManager.swift`
+   - Configure bundle identifier and signing certificates
+
+3. **Build and Run**:
+   - Select target device/simulator
+   - Press `Cmd + R` to build and run
+
+## 📚 API Documentation
+
+### Base URL
 ```
-- POST /api/user/google - Google OAuth authentication <br/>
-- User logout
+http://localhost:8080
+```
 
-#### Expense Endpoints
-- GET /api/expenses - Get all expenses (with filtering and sorting)
-- POST /api/expenses - Create a new expense
-- GET /api/expenses/{id} - Get a specific expense
-- PUT /api/expenses/{id} - Update an expense
-- DELETE /api/expenses/{id} - Delete an expense
+### 🔐 Authentication Endpoints
 
-#### Category Endpoints
-- GET /api/categories - Get all categories
-- POST /api/categories - Create a new category
+#### Register New User
+**POST** `/auth/signup`
+```json
+{
+  "name": "Sothea",
+  "email": "sothea@example.com",
+  "password": "secret123",
+  "contact": "0123456789",
+  "role": "ROLE_CUSTOMER"
+}
+```
 
-### Usage
-#### Adding Expenses
-- Manual Entry: Tap the "+" button and fill in the expense details
-- Receipt Scanning: Use the camera to scan a receipt (AI will extract details)
-- Voice Input: Use the AI Assistant to create expenses through voice commands
-#### Viewing Expenses
-- View all expenses in a sortable and filterable list
-- See spending analytics on the dashboard
-- Check recent expenses and top categories
-#### Managing Expenses
-- Swipe left on any expense to edit or delete
-- Use filter options to view specific categories or date ranges
+#### User Login
+**POST** `/auth/login`
+```json
+{
+  "email": "sothea@example.com",
+  "password": "secret123"
+}
+```
 
-### Development Roadmap
-#### Phase 1: MVP (Requesting)
-- Basic expense entry (manual and OCR)
-- AI categorization of expenses
-- Simple dashboard with spending breakdown
-- User authentication
-- iOS app and Spring Boot backend foundation
+**Response**:
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiJ9...",
+  "email": "sothea@example.com"
+}
+```
 
-#### 🚀 Phase 1: MVP (In Progress)
-- ✅ Basic expense entry (manual and OCR)
-- ✅ AI categorization of expenses
-- ✅ Simple dashboard with spending breakdown
-- ✅ User authentication system(JWT)
-- ✅ iOS app and Spring Boot backend foundation
+### 💰 Expense Management
 
-#### 🎯 Phase 2: Advanced Features (Future)
-- 🎯 Financial goals setting and tracking
-- 🏦 Bank synchronization API
-- 🤖 Advanced predictive analytics
+#### Get All Expenses
+**GET** `/api/expenses`
+```bash
+curl -H "Authorization: Bearer YOUR_JWT_TOKEN" \
+  http://localhost:8080/api/expenses
+```
 
+#### Create New Expense
+**POST** `/api/expenses`
+```json
+{
+  "amount": 29.99,
+  "description": "Lunch at restaurant",
+  "category": "Food & Dining",
+  "date": "2024-12-19",
+  "paymentMethod": "Credit Card"
+}
+```
 
+#### Update Expense
+**PUT** `/api/expenses/{id}`
 
-### To Start OPEN AI Platform:
-1) https://platform.openai.com/settings/organization/api-keys
+#### Delete Expense
+**DELETE** `/api/expenses/{id}`
 
-### To Start AI Expense Tracker Mobile:
-1) https://github.com/NemSothea/AI-Expense-Tracker
+### 📊 Categories
 
-### To Start AI Expense Tracker BackEnd Server:
-1) https://github.com/NemSothea/AIExpenseTrackerBackEnd
+#### Get All Categories
+**GET** `/api/categories`
 
-### To Start AI Expense Tracker Frontend Web:
-1) https://github.com/NemSothea/AIExpenseTrackerFrontend
+### 🔍 Interactive API Docs
+Access Swagger UI at: http://localhost:8080/swagger-ui/index.html
 
+## 🎯 Usage Guide
 
-### git Tip 
-1.  git status : See the Changes not staged for commit.
-    ex :     modified:   AIExapenseTracker.xcodeproj/project.xcworkspace/xcuserdata/sothea007.xcuserdatad/UserInterfaceState.xcuserstate
-2. remove unwanted :
-    git rm --cached AIExapenseTracker.xcodeproj/project.xcworkspace/xcuserdata/sothea007.xcuserdatad/UserInterfaceState.xcuserstate\
-3. git commit -m "Removed file that shouldn't be tracked"
-4. recheck git status :  git status 
+### Adding Expenses
 
-### Commit Emoji :
-1. https://gist.github.com/parmentf/035de27d6ed1dce0b36a
-2. https://gitmoji.dev/
+1. **Manual Entry**:
+   - Tap the "+" button on main screen
+   - Fill in expense details (amount, category, date, description)
+   - Save to automatically categorize with AI
 
-## Reference 
-1. https://www.w3schools.com/sql/sql_insert.asp
-2. https://www.rameshfadatare.com/spring-boot-tutorial/spring-boot-crud-example-with-postgresql/
-3. https://rameshfadatare.medium.com/spring-boot-crud-example-with-postgresql-926c87f0129a
-4. https://bcrypt.online/
-5. https://www.jwt.io/
-6. https://mvnrepository.com/
-7. https://github.com/navinreddy20/spring6yt
+2. **Receipt Scanning**:
+   - Select "Scan Receipt" option
+   - Capture receipt using device camera
+   - AI extracts amount, merchant, and date automatically
+   - Review and confirm details
 
+3. **Voice Input**:
+   - Tap microphone icon
+   - Speak expense details naturally: "I spent $15 on lunch today"
+   - AI processes and creates expense entry
+
+### Viewing and Managing
+
+- **Dashboard**: View spending overview with interactive charts
+- **Expense List**: Scroll through all expenses with sort/filter options
+- **Search**: Find specific expenses by description or merchant
+- **Categories**: View spending breakdown by category
+
+### Advanced Features
+
+- **Smart Filtering**: Filter by date range, category, amount
+- **Data Export**: Export expenses to CSV format
+- **Budget Alerts**: Set monthly budgets and receive notifications
+- **Multi-Currency**: Support for different currencies
+
+## 👥 Team
+
+| Role | Member | Responsibilities |
+|------|--------|------------------|
+| **Project Lead** | Sothea | iOS development, Spring Boot API, AI integration |
+| **Database Architect** | Pisey | PostgreSQL design, query optimization, data integrity |
+| **UI/UX Designer** | Seyha | Application design, web dashboard development |
+| **Documentation Lead** | Srey Nich | Documentation, presentations, demo preparation |
+
+## 🛠️ Development
+
+### Project Structure
+```
+AI-Expense-Tracker/
+├── backend/                 # Spring Boot application
+│   ├── src/main/java/
+│   ├── src/main/resources/
+│   └── pom.xml
+├── ios/                    # iOS SwiftUI application
+│   ├── Models/
+│   ├── Views/
+│   ├── ViewModels/
+│   └── Utilities/
+└── frontend/              # React web dashboard
+    ├── src/
+    ├── public/
+    └── package.json
+```
+
+### Building from Source
+
+#### Backend
+```bash
+cd backend
+mvn clean package
+java -jar target/expense-tracker-1.0.0.jar
+```
+
+#### iOS
+```bash
+cd ios
+xcodebuild -workspace AIExapenseTracker.xcworkspace -scheme AIExapenseTracker
+```
+
+#### Frontend
+```bash
+cd frontend
+npm run build
+npm start
+```
+
+## 🤝 Contributing
+
+We welcome contributions! Please follow these steps:
+
+1. Fork the repository
+2. Create a feature branch: `git checkout -b feature/amazing-feature`
+3. Commit changes: `git commit -m 'Add amazing feature'`
+4. Push to branch: `git push origin feature/amazing-feature`
+5. Open a Pull Request
+
+### Commit Message Guidelines
+- Use descriptive commit messages
+- Include relevant emojis for better readability:
+  - 🎨: Code structure/format improvements
+  - 🐛: Bug fixes
+  - ✨: New features
+  - 📝: Documentation updates
+  - 🔧: Configuration changes
+
+## 🐛 Troubleshooting
+
+### Common Issues
+
+**Backend won't start:**
+- Check PostgreSQL is running: `pg_isready`
+- Verify database credentials in `application.properties`
+- Ensure port 8080 is available
+
+**iOS build failures:**
+- Clean build folder: `Shift + Cmd + K`
+- Reset package caches: `File > Packages > Reset Package Caches`
+- Check signing certificates and bundle identifier
+
+**Frontend connection issues:**
+- Verify backend is running on port 8080
+- Check `VITE_BASE_URL` in `.env` file
+- Clear browser cache or try incognito mode
+
+### Logs and Debugging
+
+**Backend logs:** `tail -f logs/application.log`  
+**iOS debugging:** Use Xcode debug console  
+**Frontend debugging:** Browser developer tools  
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🙏 Acknowledgments
+
+- **OpenAI** for AI/ML capabilities
+- **Spring Boot** community for excellent documentation
+- **SwiftUI** team for modern iOS development framework
+- **PostgreSQL** for reliable database performance
+
+## 📞 Support
+
+- **Backend Issues**: [Create Issue](https://github.com/NemSothea/AIExpenseTrackerBackEnd/issues)
+- **iOS App Issues**: [Create Issue](https://github.com/NemSothea/AI-Expense-Tracker/issues)
+- **Frontend Issues**: [Create Issue](https://github.com/NemSothea/AIExpenseTrackerFrontend/issues)
+
+## 🔗 Links
+
+- **Main Repository**: [AI Expense Tracker](https://github.com/NemSothea/AI-Expense-Tracker)
+- **Backend API**: [Spring Boot Backend](https://github.com/NemSothea/AIExpenseTrackerBackEnd)
+- **Web Dashboard**: [React Frontend](https://github.com/NemSothea/AIExpenseTrackerFrontend)
+- **OpenAI Platform**: [API Keys](https://platform.openai.com/settings/organization/api-keys)
+
+---
+
+<div align="center">
+
+**Made with ❤️ by the AI Expense Tracker Team**
+
+*Simplifying financial management through AI power*
+
+</div>
