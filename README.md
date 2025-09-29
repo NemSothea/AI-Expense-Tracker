@@ -28,12 +28,12 @@ AI Expense Tracker is a comprehensive financial management solution that leverag
 ### 🤖 Core Capabilities
 | Feature | Description | Status |
 |---------|-------------|---------|
-| 📝 Manual Expense Entry | Traditional form-based expense logging | 🧑🏻‍💻 Processing |
-| 📷 Receipt OCR Scanning | AI-powered receipt scanning with automatic data extraction | 🧑🏻‍💻 Processing |
-| 🎤 Voice Input | Natural language expense creation via voice commands | 🧑🏻‍💻 Processing |
-| 🏷️ AI Categorization | Machine learning-based automatic expense categorization | 🧑🏻‍💻 Processing |
-| 📊 Data Visualization | Interactive charts and spending analytics |🧑🏻‍💻 Processing |
-| 🔐 Secure Authentication | JWT + OAuth2 with role-based access control | 🧑🏻‍💻 Processing |
+| 📝 Manual Expense Entry | Traditional form-based expense logging | 🧑🏻‍💻 Progressing |
+| 📷 Receipt OCR Scanning | AI-powered receipt scanning with automatic data extraction | 🧑🏻‍💻 Progressing |
+| 🎤 Voice Input | Natural language expense creation via voice commands | 🧑🏻‍💻 Progressing |
+| 🏷️ AI Categorization | Machine learning-based automatic expense categorization | 🧑🏻‍💻 Progressing |
+| 📊 Data Visualization | Interactive charts and spending analytics |🧑🏻‍💻 Progressing |
+| 🔐 Secure Authentication | JWT + OAuth2 with role-based access control | 🧑🏻‍💻 Progressing |
 
 ### 🔧 Technical Features
 - **Backend**: Spring Boot with RESTful APIs
