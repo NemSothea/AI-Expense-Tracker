@@ -78,17 +78,13 @@ CREATE DATABASE aiexpensedb;
 ```sql
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
+    version BIGINT NOT NULL DEFAULT 0,
     name VARCHAR(20) NOT NULL,
-    email VARCHAR(255) NOT NULL UNIQUE,
+    email VARCHAR(255) UNIQUE,
     password VARCHAR(255) NOT NULL,
-    contact_number VARCHAR(10) UNIQUE,
-    role VARCHAR(50),
-    enabled BOOLEAN DEFAULT TRUE,
-    
-    -- Constraints
-    CHECK (char_length(name) >= 2 AND char_length(name) <= 20),
-    CHECK (char_length(password) >= 5),
-    CHECK (contact_number ~ '^[0-9]{10}$')
+    contact VARCHAR(10) UNIQUE,
+    role VARCHAR(255),
+    enabled BOOLEAN
 );
 ```
 
