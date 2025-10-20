@@ -32,30 +32,45 @@ struct ContentView: View {
     
     var tapView : some View {
         TabView {
+            // Home
+            NavigationStack {
+                AnimatedDashboardHomeView()
+            }
+            .tabItem {
+                Label("Home", systemImage: "house.fill")
+            }
+            .tag(0)
+            
+            // Exspense
             NavigationStack {
                 LogListContainerView(vm: $vm)
             }
             .tabItem {
-                Label("Exspense", systemImage: "tray")
-            }.tag(0)
+                Label("Expenses", systemImage: "list.bullet")
+            }
+            .tag(1)
             
             NavigationStack {
                 AIAssitantView()
             }
             .tabItem {
                 Label("AI Assistant", systemImage: "waveform")
-            }.tag(1)
+            }.tag(2)
             NavigationStack {
                 AccountView(onLogout: onLogout)
             }
             .tabItem {
                 Label("Profile", systemImage: "person.circle")
-            }.tag(2)
+            }.tag(3)
         }
     }
     var splitView : some View {
         NavigationSplitView {
             List {
+                NavigationLink(destination: AnimatedDashboardHomeView()) {
+                    Label("Dashboard", systemImage: "house.fill")
+                }
+                
                 NavigationLink(destination: LogListView(vm: $vm)) {
                     Label("Exspense", systemImage: "tray")
                 }
@@ -70,7 +85,7 @@ struct ContentView: View {
             
             
         } detail : {
-            LogListContainerView(vm: $vm)
+            AnimatedDashboardHomeView()
         }
         .navigationTitle("AI Expenses Tracker")
     }

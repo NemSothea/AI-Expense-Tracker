@@ -60,14 +60,14 @@ struct LogItemView: View {
 }
 
 
-#Preview {
-    
-    VStack {
-        
-        ForEach([ExspenseLog(id: "1", name: "sushi", category: "Drink", amount: 10, currency: "USD", date: .now),ExspenseLog(id: "2", name: "Electricity", category: "Utilities", amount: 100, currency: "USD", date: .now)]) { log in
-            LogItemView(log: log)
-        }
-        
-    }
-  
-}
+//#Preview {
+//    
+//    VStack {
+//        
+//        ForEach([ExspenseLog(id: "1", name: "sushi", category: "Drink", amount: 10, currency: "USD", date: .now),ExspenseLog(id: "2", name: "Electricity", category: "Utilities", amount: 100, currency: "USD", date: .now)]) { log in
+//            LogItemView(log: log)
+//        }
+//        
+//    }
+//  
+//}

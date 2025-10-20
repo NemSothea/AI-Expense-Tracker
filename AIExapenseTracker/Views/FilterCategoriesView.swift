@@ -49,37 +49,41 @@ struct FilterCategoriesView: View {
 
 
 struct FilterButtonView: View {
-    
-    var category    : Category
-    var isSelected  : Bool
-    var onTap       : (Category) -> ()
+    var category: Category
+    var isSelected: Bool
+    var onTap: (Category) -> ()
     
     var body: some View {
-        HStack(spacing:4) {
+        HStack(spacing: 6) {
+            Image(systemName: category.systemNameIcon)
+                .font(.caption)
+                .foregroundColor(isSelected ? .white : category.color)
+            
             Text(category.rawValue.capitalized)
+                .font(.caption)
                 .fixedSize(horizontal: true, vertical: true)
-                .padding(.horizontal,16)
-                .padding(.vertical,4)
-                .background {
-                    RoundedRectangle(cornerRadius: 16)
-                        .stroke( isSelected ? category.color : Color.gray,lineWidth:1)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 16).foregroundStyle(isSelected ? category.color : Color.clear)
-                        }
-                }
-                .frame(height: 44)
-                .onTapGesture {
-                    self.onTap(self.category)
-                }
-                .foregroundStyle(isSelected ? .white : Color.black)
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 6)
+        .background {
+            RoundedRectangle(cornerRadius: 16)
+                .stroke(isSelected ? category.color : Color.gray, lineWidth: 1)
+                .overlay {
+                    RoundedRectangle(cornerRadius: 16)
+                        .foregroundColor(isSelected ? category.color : Color.clear)
+                }
+        }
+        .frame(height: 32)
+        .onTapGesture {
+            self.onTap(self.category)
+        }
+        .foregroundColor(isSelected ? .white : Color.primary)
     }
 }
 
 
-
-#Preview {
-    
-    @Previewable @State var vm = LogListViewModel()
-    return FilterCategoriesView(selectedCategories: $vm.selectedCategories)
-}
+//#Preview {
+//    
+//    @Previewable @State var vm = LogListViewModel()
+//    return FilterCategoriesView(selectedCategories: $vm.selectedCategories)
+//}

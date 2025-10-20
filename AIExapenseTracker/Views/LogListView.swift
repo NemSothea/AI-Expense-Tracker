@@ -4,105 +4,187 @@
 //
 //  Created by sothea007 on 10/12/24.
 //
-import FirebaseFirestore
+
 import SwiftUI
 
 struct LogListView: View {
-    
-    @Binding var vm : LogListViewModel
-    
-    @FirestoreQuery(collectionPath: "logs",predicates: [.order(by: SortType.date.rawValue, descending: true)])
-    
-    private var logs : [ExspenseLog]
+    @Binding var vm: LogListViewModel
     
     var body: some View {
-    
         listView
-            .sheet(item: $vm.logToEdit, onDismiss: {
-                vm.logToEdit = nil
-            }) { log in
-                LogFormView(vm:.init(logToEdit: log))
+            .sheet(item: $vm.expenseToEdit, onDismiss: {
+                vm.expenseToEdit = nil
+            }) { expense in
+                LogFormView(vm: .init(expenseToEdit: expense, logListVM: vm))
             }
             .overlay {
-                if logs.isEmpty {
-                    Text("No expenses data\n Please add expenses using the add button")
-                        .multilineTextAlignment(.center)
-                        .font(.headline)
-                        .padding(.horizontal)
+                if vm.isLoading && vm.expenses.isEmpty {
+                    ProgressView("Loading expenses...")
+                } else if vm.expenses.isEmpty && !vm.isLoading {
+                    emptyStateView
                 }
             }
-            .onChange(of: vm.sortType) {
-                updateFireStoreQuery()
+            .task {
+                // Load initial data
+                if vm.expenses.isEmpty {
+                    await vm.loadExpenses(isRefreshing: true)
+                }
             }
-            .onChange(of: vm.sortOrder) {
-                updateFireStoreQuery()
-            }
-            .onChange(of: vm.selectedCategories) {
-                updateFireStoreQuery()
+            .refreshable {
+                await vm.loadExpenses(isRefreshing: true)
             }
     }
     
-    var listView : some View {
+    private var emptyStateView: some View {
+        VStack(spacing: 16) {
+            Image(systemName: "tray")
+                .font(.system(size: 50))
+                .foregroundColor(.secondary)
+            
+            Text("No Expenses Yet")
+                .font(.title2)
+                .fontWeight(.semibold)
+            
+            Text("Start tracking your expenses by tapping the add button above.")
+                .font(.body)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+                .padding(.horizontal)
+        }
+        .padding()
+    }
+    
+    var listView: some View {
 #if os(iOS)
         List {
-            ForEach(logs) { log in
-                LogItemView(log: log)
+            ForEach(vm.filteredExpenses) { expense in
+                ExpenseItemView(expense: expense)
                     .contentShape(Rectangle())
                     .onTapGesture {
-                        vm.logToEdit = log
+                        vm.expenseToEdit = expense
                     }
-                    .padding(.vertical,4)
-                
+                    .padding(.vertical, 4)
+                    .listRowSeparator(.visible)
             }
-            .onDelete(perform: self.onDelete)
+            
+            // Load more indicator
+            if vm.hasMorePages && !vm.filteredExpenses.isEmpty {
+                ProgressView()
+                    .frame(maxWidth: .infinity)
+                    .onAppear {
+                        Task {
+                            await vm.loadExpenses()
+                        }
+                    }
+            }
         }
         .listStyle(.plain)
 #else
         ZStack {
-            ScrollView {
-                ForEach(logs) { log in
-                    VStack {
-                        LogItemView(log: log)
-                        Divider()
-                    }
-                    .frame(minWidth: 0, maxHeight: .infinity,alignment: .leading)
-                    .contentShape(Rectangle())
-                    .padding(.horizontal)
-                    .onTapGesture {
-                        self.vm.logToEdit = log
-                    }
-                    .contextMenu {
-                        Button("Edit") {
-                            self.vm.logToEdit = log
+            if vm.filteredExpenses.isEmpty && !vm.isLoading {
+                emptyStateView
+            } else {
+                ScrollView {
+                    LazyVStack(spacing: 0) {
+                        ForEach(vm.filteredExpenses) { expense in
+                            ExpenseItemView(expense: expense)
+                                .contentShape(Rectangle())
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .background(Color(.controlBackgroundColor))
+                                .cornerRadius(8)
+                                .padding(.horizontal, 8)
+                                .onTapGesture {
+                                    vm.expenseToEdit = expense
+                                }
+                                .contextMenu {
+                                    Button("Edit") {
+                                        vm.expenseToEdit = expense
+                                    }
+                                    Button("Delete") {
+                                        Task {
+                                            await vm.deleteExpense(expense)
+                                        }
+                                    }
+                                }
+                            
+                            Divider()
+                                .padding(.leading, 60)
                         }
-                        Button("Delete") {
-                            vm.db.delete(log: log)
+                        
+                        // Load more indicator for macOS
+                        if vm.hasMorePages && !vm.filteredExpenses.isEmpty {
+                            ProgressView()
+                                .frame(maxWidth: .infinity)
+                                .padding()
+                                .onAppear {
+                                    Task {
+                                        await vm.loadExpenses()
+                                    }
+                                }
                         }
                     }
-                
                 }
-                .contentMargins(.vertical,8,for: .scrollContent)
+            }
         }
-    }
 #endif
     }
+}
+
+struct ExpenseItemView: View {
+    let expense: Expense
     
-    private func onDelete(with indexSet: IndexSet) {
-        indexSet.forEach {  index in
-            let log = logs[index]
-            vm.db.delete(log: log)
+    private var category: Category {
+        Category.fromBackendName(expense.category)
+    }
+    
+    var body: some View {
+        HStack(spacing: 12) {
+            // Category Icon
+            Image(systemName: category.systemNameIcon)
+                .font(.title3)
+                .foregroundColor(category.color)
+                .frame(width: 32)
+            
+            VStack(alignment: .leading, spacing: 2) {
+                Text(expense.description)
+                    .font(.body)
+                    .lineLimit(1)
+                
+                Text(expense.category)
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+            }
+            
+            Spacer()
+            
+            VStack(alignment: .trailing, spacing: 2) {
+                Text(expense.amount, format: .currency(code: "USD"))
+                    .font(.body)
+                    .fontWeight(.semibold)
+                    .foregroundColor(.primary)
+                
+                Text(formatDate(expense.expenseDate))
+                    .font(.caption2)
+                    .foregroundColor(.secondary)
+            }
         }
-    }
-    func updateFireStoreQuery() {
-        $logs.predicates = vm.predicates
+        .padding(.vertical, 6)
+        .contentShape(Rectangle())
     }
     
-    
+    private func formatDate(_ dateString: String) -> String {
+        let inputFormatter = DateFormatter()
+        inputFormatter.dateFormat = "yyyy-MM-dd"
+        
+        let outputFormatter = DateFormatter()
+        outputFormatter.dateFormat = "MMM d" // "Oct 20" format
+        
+        if let date = inputFormatter.date(from: dateString) {
+            return outputFormatter.string(from: date)
+        }
+        
+        return dateString
+    }
 }
 
-
-#Preview {
-    @Previewable @State var vm = LogListViewModel()
-    return LogListView(vm: $vm)
-  
-}

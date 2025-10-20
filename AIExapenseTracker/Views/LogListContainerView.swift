@@ -7,12 +7,12 @@
 
 import SwiftUI
 
+
 struct LogListContainerView: View {
-    
     @Binding var vm: LogListViewModel
     
     var body: some View {
-        VStack(spacing:0) {
+        VStack(spacing: 0) {
             FilterCategoriesView(selectedCategories: $vm.selectedCategories)
             Divider()
             SelectSortOrderView(sortType: $vm.sortType, sortOrder: $vm.sortOrder)
@@ -23,13 +23,13 @@ struct LogListContainerView: View {
             ToolbarItem {
                 Button {
                     vm.isLogFormPresented = true
-                }label: {
+                } label: {
 #if os(macOS)
                     HStack {
                         Image(systemName: "plus")
                             .symbolRenderingMode(.monochrome)
                             .tint(.accentColor)
-                        Text("Add Exapense log")
+                        Text("Add Expense")
                     }
                     .foregroundStyle(Color.accentColor)
 #else
@@ -39,21 +39,12 @@ struct LogListContainerView: View {
             }
         }
         .sheet(isPresented: $vm.isLogFormPresented) {
-            LogFormView(vm: .init())
+            LogFormView(vm: .init(logListVM: vm))
         }
         
 #if !os(macOS)
-    .navigationBarTitle("AI Expense Tracker",displayMode:.inline)
+        .navigationBarTitle("AI Expense Tracker", displayMode: .inline)
 #endif
     }
-    
 }
 
-#Preview {
-    @Previewable @State var vm = LogListViewModel()
-    
-    return NavigationStack {
-        LogListContainerView(vm: $vm)
-    }
- 
-}

@@ -9,12 +9,14 @@ import SwiftUI
 
 struct LogFormView: View {
     
-    @State var vm : FormViewModel
+    @State var vm: FormViewModel
     @Environment(\.dismiss) var dismiss
+    @State private var isSaving = false
+    @State private var error: String?
     
 #if !os(macOS)
-    var title : String {
-        ((vm.logToEdit == nil) ? "Create" : "Edit") + " Expense Log"
+    var title: String {
+        ((vm.expenseToEdit == nil) ? "Create" : "Edit") + " Expense"
     }
     
     var body: some View {
@@ -23,79 +25,91 @@ struct LogFormView: View {
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
                         Button("Save") {
-                            self.onSaveTaped()
+                            Task {
+                                await self.onSaveTapped()
+                            }
                         }
-                        .disabled(vm.isSaveButtonDisabled)
+                        .disabled(vm.isSaveButtonDisabled || isSaving)
                     }
                     ToolbarItem(placement: .cancellationAction) {
                         Button("Cancel") {
-                            self.onCancleTaped()
+                            self.onCancelTapped()
                         }
-                        
                     }
                 }
         }
         .navigationBarTitle(title, displayMode: .large)
-        
-        
     }
-    
 #else
     var body: some View {
         VStack {
             formView.padding()
+            if let error = error {
+                Text(error)
+                    .foregroundColor(.red)
+                    .font(.caption)
+            }
             HStack {
                 Button("Cancel") {
-                    self.onCancleTaped()
+                    self.onCancelTapped()
                 }
                 Button("Save") {
-                    self.onSaveTaped()
+                    Task {
+                        await self.onSaveTapped()
+                    }
                 }
                 .buttonStyle(BorderedProminentButtonStyle())
-                .disabled(vm.isSaveButtonDisabled)
+                .disabled(vm.isSaveButtonDisabled || isSaving)
             }
             .padding()
         }
         .frame(minWidth: 300)
     }
-    
 #endif
     
-    private var formView : some View {
+    private var formView: some View {
         Form {
-            TextField("Name  ", text: $vm.name)
+            TextField("Description", text: $vm.name)
                 .disableAutocorrection(true)
-            TextField("Amount ", value: $vm.amount, formatter: vm.numberFormatter)
+            TextField("Amount", value: $vm.amount, formatter: vm.numberFormatter)
 #if !os(macOS)
                 .keyboardType(.numbersAndPunctuation)
 #endif
             
-            Picker(selection: $vm.category,label: Text("Category")) {
+            Picker(selection: $vm.category, label: Text("Category")) {
                 ForEach(Category.allCases) { category in
                     Text(category.rawValue.capitalized).tag(category)
                 }
             }
-            DatePicker(selection: $vm.date,displayedComponents: [.date,.hourAndMinute]) {
-                Text("Date  ")
+            DatePicker(selection: $vm.date, displayedComponents: [.date]) {
+                Text("Date")
             }
         }
-        
-        
     }
-    private func onCancleTaped() {
+    
+    private func onCancelTapped() {
         self.dismiss()
     }
-    private func onSaveTaped() {
+    
+    private func onSaveTapped() async {
 #if !os(macOS)
-        
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
-        
 #endif
-        self.vm.save()
-        self.dismiss()
+        
+        isSaving = true
+        error = nil
+        
+        let success = await vm.save()
+        
+        if success {
+            await MainActor.run {
+                self.dismiss()
+            }
+        } else {
+            // Error is handled in the ViewModel
+            error = "Failed to save expense"
+        }
+        
+        isSaving = false
     }
-}
-
-#Preview {
-    LogFormView(vm: .init())
 }

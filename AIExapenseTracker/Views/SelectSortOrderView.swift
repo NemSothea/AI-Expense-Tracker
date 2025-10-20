@@ -63,7 +63,7 @@ struct SelectSortOrderView: View {
    
 }
 
-#Preview {
-    @Previewable @State var vm = LogListViewModel()
-    SelectSortOrderView( sortType: $vm.sortType, sortOrder: $vm.sortOrder)
-}
+//#Preview {
+//    @Previewable @State var vm = LogListViewModel()
+//    SelectSortOrderView( sortType: $vm.sortType, sortOrder: $vm.sortOrder)
+//}

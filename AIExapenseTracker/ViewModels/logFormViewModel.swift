@@ -9,17 +9,18 @@ import Foundation
 import Observation
 
 @Observable
-class FormViewModel  {
-    var logToEdit: ExspenseLog?
-    let db = DataBaseManager.shared
+class FormViewModel {
+    var expenseToEdit: Expense?
+    private let logListVM: LogListViewModel
     
     var name = ""
-    var amount : Double = 0
+    var amount: Double = 0
     var category = Category.utilities
-    var date : Date = Date()
+    var date: Date = Date()
+    
     
     var isSaveButtonDisabled: Bool {
-        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        name.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty || amount <= 0
     }
     
     let numberFormatter: NumberFormatter = {
@@ -30,41 +31,44 @@ class FormViewModel  {
         return formatter
     }()
     
-    
-    init(logToEdit: ExspenseLog? = nil) {
-        self.logToEdit = logToEdit
-        if let logToEdit {
-            self.name = logToEdit.name
-            self.amount = logToEdit.amount
-            self.category = logToEdit.categoryEnum
-            self.date = logToEdit.date
-            numberFormatter.currencyCode = logToEdit.currency
+    init(expenseToEdit: Expense? = nil, logListVM: LogListViewModel) {
+        self.expenseToEdit = expenseToEdit
+        self.logListVM = logListVM
+        
+        if let expenseToEdit {
+            self.name = expenseToEdit.description
+            self.amount = expenseToEdit.amount
+            // Use reverse mapping
+            self.category = Category.fromBackendName(expenseToEdit.category)
+            // Parse date string to Date
+            let formatter = DateFormatter()
+            formatter.dateFormat = "yyyy-MM-dd"
+            self.date = formatter.date(from: expenseToEdit.expenseDate) ?? Date()
         }
     }
-    func save() {
-        var log : ExspenseLog
-        if let logToEdit {
-            log = logToEdit
+    
+    
+    
+    @MainActor
+    func save() async -> Bool {
+        if expenseToEdit == nil {
+            // Create new expense
+            return await logListVM.createExpense(
+                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                amount: amount,
+                category: category,
+                date: date
+            )
         } else {
-            log = ExspenseLog(id: UUID().uuidString, name: "Unknown", category: "Unknown", amount: 0, date: .now)
+            // Update existing expense
+            guard let expenseToEdit = expenseToEdit else { return false }
+            return await logListVM.updateExpense(
+                expense: expenseToEdit,
+                name: name.trimmingCharacters(in: .whitespacesAndNewlines),
+                amount: amount,
+                category: category,
+                date: date
+            )
         }
-        
-        log.name = self.name.trimmingCharacters(in: .whitespacesAndNewlines)
-        log.category = self.category.rawValue
-        log.amount = self.amount
-        log.date = self.date
-        
-        if self.logToEdit == nil {
-            try? db.add(log: log)
-        }else {
-            db.update(log: log)
-        }
-
-        
     }
-    func delete(log: ExspenseLog) {
-        db.delete(log: log)
-    }
-    
 }
-

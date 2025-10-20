@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1639BE4B2EA679D400DAA623 /* Alamofire */; };
 		166593AE2D07FDFB005F9856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 166593AB2D07FDFB005F9856 /* README.md */; };
 		166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 166593B12D0801B7005F9856 /* FirebaseFirestore */; };
 		16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */ = {isa = PBXBuildFile; productRef = 16D896862D1D21D900561032 /* ChatGPTUI */; };
@@ -76,6 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */,
 				16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */,
 				166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */,
 			);
@@ -135,6 +137,7 @@
 			packageProductDependencies = (
 				166593B12D0801B7005F9856 /* FirebaseFirestore */,
 				16D896862D1D21D900561032 /* ChatGPTUI */,
+				1639BE4B2EA679D400DAA623 /* Alamofire */,
 			);
 			productName = AIExapenseTracker;
 			productReference = 1665937C2D07FC91005F9856 /* AIExapenseTracker.app */;
@@ -167,6 +170,7 @@
 			packageReferences = (
 				166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */,
+				1639BE4A2EA679D400DAA623 /* XCRemoteSwiftPackageReference "Alamofire" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1665937D2D07FC91005F9856 /* Products */;
@@ -340,7 +344,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -382,7 +386,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -426,6 +430,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		1639BE4A2EA679D400DAA623 /* XCRemoteSwiftPackageReference "Alamofire" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/Alamofire/Alamofire.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 5.10.2;
+			};
+		};
 		166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -445,6 +457,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		1639BE4B2EA679D400DAA623 /* Alamofire */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 1639BE4A2EA679D400DAA623 /* XCRemoteSwiftPackageReference "Alamofire" */;
+			productName = Alamofire;
+		};
 		166593B12D0801B7005F9856 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
