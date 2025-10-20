@@ -57,7 +57,7 @@ struct ContentView: View {
                 Label("AI Assistant", systemImage: "waveform")
             }.tag(2)
             NavigationStack {
-                AccountView(onLogout: onLogout)
+                EnhancedAccountView(onLogout: onLogout)
             }
             .tabItem {
                 Label("Profile", systemImage: "person.circle")
@@ -78,7 +78,7 @@ struct ContentView: View {
                     Label("AI Assistant", systemImage: "waveform")
                 }
                 
-                NavigationLink(destination:  AccountView(onLogout: onLogout)) {
+                NavigationLink(destination:  EnhancedAccountView(onLogout: onLogout)) {
                     Label("Account", systemImage: "person.circle")
                 }
             }

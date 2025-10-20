@@ -9,18 +9,21 @@
 import SwiftUI
 
 struct AnimatedSummaryCard: View {
-    let title: String
-    let value: Double
-    let format: FloatingPointFormatStyle<Double>.Currency
-    let subtitle: String?
-    let icon: String
-    let color: Color
-    let delay: Double
+    
+    let title       : String
+    let value       : Double
+    let format      : FloatingPointFormatStyle<Double>.Currency
+    let subtitle    : String?
+    let icon        : String
+    let color       : Color
+    let delay       : Double
     
     @State private var animatedValue: Double = 0
     @State private var isAppeared = false
     
-    init(title: String, value: Double, format: FloatingPointFormatStyle<Double>.Currency, subtitle: String? = nil, icon: String, color: Color, delay: Double = 0) {
+    init(title: String, value: Double, format: FloatingPointFormatStyle<Double>.Currency,
+         subtitle: String? = nil, icon: String,
+         color: Color, delay: Double = 0) {
         self.title = title
         self.value = value
         self.format = format
@@ -43,7 +46,7 @@ struct AnimatedSummaryCard: View {
             }
             
             Text(animatedValue, format: format)
-                .font(.title2)
+                .font(.headline)
                 .fontWeight(.bold)
                 .foregroundColor(.primary)
                 .monospacedDigit()

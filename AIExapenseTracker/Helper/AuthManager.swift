@@ -40,7 +40,7 @@ final class AuthManager: ObservableObject {
     }
     
     private func checkExistingAuth() {
-        if let token = UserDefaults.standard.string(forKey: "authToken"),
+        if let _ = UserDefaults.standard.string(forKey: "authToken"),
            let userData = UserDefaults.standard.data(forKey: "userData"),
            let user = try? JSONDecoder().decode(User.self, from: userData) {
             self.currentUser = user

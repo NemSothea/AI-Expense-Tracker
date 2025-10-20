@@ -91,7 +91,7 @@ actor NetworkService {
             "email": email,
             "password": password
         ]
-        print("parameters===> \(parameters)")
+        
         
         return try await withCheckedThrowingContinuation { continuation in
             AF.request(
