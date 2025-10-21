@@ -9,7 +9,7 @@ import SwiftUI
 import ChatGPTUI
 
 #warning("Don't commit this api key to git")
-let KOSIGNAPIKEY =
+let aiExpenseKey =
 "your api key"
 
 enum ChatType : String,CaseIterable, Identifiable {
@@ -21,7 +21,9 @@ enum ChatType : String,CaseIterable, Identifiable {
 
 struct AIAssitantView: View {
     
-    @State var textChatVM = AIAssistantTextChatViewModel(apiKey: KOSIGNAPIKEY)
+    @State var textChatVM = AIAssistantTextChatViewModel(apiKey: aiExpenseKey)
+    @State var voiceChatVM = AIAssistantVoiceChatViewModel(apiKey: aiExpenseKey)
+    
     @State var chatType: ChatType = .text
     
     var body: some View {
@@ -44,10 +46,8 @@ struct AIAssitantView: View {
                     
                     TextChatView(customContentVM: textChatVM)
                     
-//                    TextChatView(model:.gpt_hyphen_3_period_5_hyphen_turbo,apiKey: KOSIGNAPIKEY)
-                    
                 case .void:
-                    VoiceChatView(model:.gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106,apiKey: KOSIGNAPIKEY)
+                    VoiceChatView(customContentVM: voiceChatVM)
                 }
             }
             .frame(maxWidth: 1024,alignment: .center)

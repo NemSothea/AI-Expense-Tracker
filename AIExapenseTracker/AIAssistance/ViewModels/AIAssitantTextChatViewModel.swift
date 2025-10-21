@@ -5,26 +5,39 @@
 //  Created by sothea007 on 26/12/24.
 //
 
-import Foundation
+
+import ChatGPTSwift
 import ChatGPTUI
 import Observation
-import ChatGPTSwift
+import Foundation
 
 @Observable
-class AIAssistantTextChatViewModel : TextChatViewModel <AIAssitantResponseView> {
+class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView> {
     
-    var functionSystemText: String {
-        """
-        You are an expert expense tracker. 
-        Always use the 'addExpenseLog' function to track expenses. 
-        If the user omits 'amount', 'category', or 'date', ASK them for it directly. 
-        Never assume or skip required fields.
-        """
-    }
-    /// parallel function calling
-    /// .gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106
-    init(apiKey:String, model: ChatGPTModel = .gpt_hyphen_3_period_5_hyphen_turbo_hyphen_1106) {
-        super.init(apiKey: apiKey)
+    let functionsManager: FunctionsManager
+    let db = DatabaseManager.shared
+    
+    init(apiKey: String, model: ChatGPTModel = .gpt_hyphen_4o) {
+        self.functionsManager = .init(apiKey: apiKey)
+        super.init(senderImage: "takeoutbag.and.cup.and.straw.fill", botImage: "takeoutbag.and.cup.and.straw.fill", model: model, apiKey: apiKey)
+        self.functionsManager.addLogConfirmationCallback = { [weak self] isConfirmed, props in
+            guard let self, let id = props.messageID, let index = self.messages.firstIndex(where: { $0.id == id }) else {
+                return
+            }
+            var messageRow = self.messages[index]
+            let text: String
+            if isConfirmed {
+                try? self.db.add(log: props.log)
+                text = "Sure, i've added this log to your expenses list"
+            } else {
+                text = "Ok, i won't be adding this log"
+            }
+            
+            let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: id, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))
+            
+            messageRow.response = .customContent({ AIAssistantResponseView(response: response) })
+            self.messages[index] = messageRow
+        }
     }
     
     @MainActor
@@ -37,8 +50,7 @@ class AIAssistantTextChatViewModel : TextChatViewModel <AIAssitantResponseView> 
     }
     
     @MainActor
-    override func retry(message: MessageRow<AIAssitantResponseView>) async {
-        
+    override func retry(message: MessageRow<AIAssistantResponseView>) async {
         self.task = Task {
             guard let index = messages.firstIndex(where: { $0.id == message.id }) else {
                 return
@@ -49,9 +61,9 @@ class AIAssistantTextChatViewModel : TextChatViewModel <AIAssitantResponseView> 
     }
     
     @MainActor
-    func callFunction(_ prompt : String) async {
+    func callFunction(_ prompt: String) async {
         isPrompting = true
-        var messageRow = MessageRow<AIAssitantResponseView>(
+        var messageRow = MessageRow<AIAssistantResponseView>(
             isPrompting: true,
             sendImage: senderImage,
             send: .rawText(prompt),
@@ -62,22 +74,8 @@ class AIAssistantTextChatViewModel : TextChatViewModel <AIAssitantResponseView> 
         self.messages.append(messageRow)
         
         do {
-            let message = try await api.callFunction(prompt: prompt, tools: tools,model: model,systemText: functionSystemText)
-            try Task.checkCancellation()
-            
-            
-            if let toolCall = message.tool_calls?.first {
-                var text = "Function Name: \(toolCall.function.name)"
-                text += "\nArgs: \(toolCall.function.arguments)"
-                messageRow.response = .customContent({ AIAssitantResponseView(text: text) })
-                
-            }else if let message = message.content {
-                api.appendToHistoryList(userText: prompt, responseText: message)
-                messageRow.response = .customContent({ AIAssitantResponseView(text: message) })
-                
-            }else {
-                throw "Invalid response"
-            }
+            let response = try await functionsManager.prompt(prompt, model: model, messageID: messageRow.id)
+            messageRow.response = .customContent({ AIAssistantResponseView(response: response)})
         } catch {
             messageRow.responseError = error.localizedDescription
         }
@@ -85,7 +83,7 @@ class AIAssistantTextChatViewModel : TextChatViewModel <AIAssitantResponseView> 
         messageRow.isPrompting = false
         self.messages[self.messages.count - 1] = messageRow
         isPrompting = false
+
     }
     
- 
 }

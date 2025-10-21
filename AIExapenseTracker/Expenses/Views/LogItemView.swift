@@ -10,7 +10,7 @@ import SwiftUI
 struct LogItemView: View {
     
    
-    let log : ExspenseLog
+    let log : ExpenseLog
     
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     

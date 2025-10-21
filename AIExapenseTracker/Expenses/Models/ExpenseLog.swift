@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct ExspenseLog : Codable, Identifiable, Equatable {
+struct ExpenseLog : Codable, Identifiable, Equatable {
     
     var id  : String
     var name : String
@@ -33,7 +33,7 @@ struct ExspenseLog : Codable, Identifiable, Equatable {
 
 }
 
-extension ExspenseLog {
+extension ExpenseLog {
     
     var dateText : String {
         Utils.dateFormatter.string(from: date)

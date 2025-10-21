@@ -8,8 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1639BE4B2EA679D400DAA623 /* Alamofire */; };
+		16516CDB2EA7E6470030BE9B /* AIReceiptScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 16516CDA2EA7E6470030BE9B /* AIReceiptScanner */; };
 		166593AE2D07FDFB005F9856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 166593AB2D07FDFB005F9856 /* README.md */; };
-		166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 166593B12D0801B7005F9856 /* FirebaseFirestore */; };
 		16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */ = {isa = PBXBuildFile; productRef = 16D896862D1D21D900561032 /* ChatGPTUI */; };
 /* End PBXBuildFile section */
 
@@ -78,8 +78,8 @@
 			buildActionMask = 2147483647;
 			files = (
 				1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */,
+				16516CDB2EA7E6470030BE9B /* AIReceiptScanner in Frameworks */,
 				16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */,
-				166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -135,9 +135,9 @@
 			);
 			name = AIExapenseTracker;
 			packageProductDependencies = (
-				166593B12D0801B7005F9856 /* FirebaseFirestore */,
 				16D896862D1D21D900561032 /* ChatGPTUI */,
 				1639BE4B2EA679D400DAA623 /* Alamofire */,
+				16516CDA2EA7E6470030BE9B /* AIReceiptScanner */,
 			);
 			productName = AIExapenseTracker;
 			productReference = 1665937C2D07FC91005F9856 /* AIExapenseTracker.app */;
@@ -168,9 +168,9 @@
 			mainGroup = 166593732D07FC91005F9856;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */,
 				1639BE4A2EA679D400DAA623 /* XCRemoteSwiftPackageReference "Alamofire" */,
+				16516CD92EA7E6470030BE9B /* XCRemoteSwiftPackageReference "AIReceiptScanner" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1665937D2D07FC91005F9856 /* Products */;
@@ -438,12 +438,12 @@
 				minimumVersion = 5.10.2;
 			};
 		};
-		166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
+		16516CD92EA7E6470030BE9B /* XCRemoteSwiftPackageReference "AIReceiptScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
+			repositoryURL = "https://github.com/alfianlosari/AIReceiptScanner";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 11.6.0;
+				minimumVersion = 1.0.4;
 			};
 		};
 		16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */ = {
@@ -462,10 +462,10 @@
 			package = 1639BE4A2EA679D400DAA623 /* XCRemoteSwiftPackageReference "Alamofire" */;
 			productName = Alamofire;
 		};
-		166593B12D0801B7005F9856 /* FirebaseFirestore */ = {
+		16516CDA2EA7E6470030BE9B /* AIReceiptScanner */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
-			productName = FirebaseFirestore;
+			package = 16516CD92EA7E6470030BE9B /* XCRemoteSwiftPackageReference "AIReceiptScanner" */;
+			productName = AIReceiptScanner;
 		};
 		16D896862D1D21D900561032 /* ChatGPTUI */ = {
 			isa = XCSwiftPackageProductDependency;
