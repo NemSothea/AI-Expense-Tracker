@@ -9,13 +9,13 @@ import ChatGPTUI
 import Foundation
 import Observation
 import ChatGPTSwift
-import FirebaseFirestore
+
 
 @Observable
 class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantResponseView> {
     
     let functionsManager: FunctionsManager
-    let db = DatabaseManager.shared
+    let db = ExpenseService.shared
     
     init(apiKey: String, model: ChatGPTModel = .gpt_hyphen_4o) {
         self.functionsManager = .init(apiKey: apiKey)
@@ -26,10 +26,27 @@ class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantResponseView>
             }
             let text: String
             if isConfirmed {
-                try? self.db.add(log: props.log)
-                text = "Sure, i've added this log to your expenses list"
+                do {
+                    // 2) Map the assistant log to your API request
+                    
+                    
+//                    let req = ExpenseRequest(
+//                        userId:
+//                        name: props.log.name,
+//                        amount: props.log.amount,
+//                        categoryId: props.log.categoryEnum.backendId, // implement mapping once
+//                        date: props.log.dateText // "yyyy-MM-dd"
+//                    )
+//
+//                    // 3) Call your backend
+//                    _ = try await expenseService.createExpense(req)
+
+                    text = "Sure, I’ve added this log to your expenses list"
+                } catch {
+                    text = "I couldn’t add the log (network/error)."
+                }
             } else {
-                text = "Ok, i won't be adding this log"
+                text = "Ok, I won’t be adding this log"
             }
             
             let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: nil, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))

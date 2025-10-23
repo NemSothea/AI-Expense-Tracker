@@ -10,6 +10,7 @@ import Observation
 
 @Observable
 class LogListViewModel {
+    
     private let expenseService = ExpenseService.shared
     
     var expenses: [Expense] = []

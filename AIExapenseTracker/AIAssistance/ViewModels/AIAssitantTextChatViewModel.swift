@@ -15,30 +15,69 @@ import Foundation
 class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView> {
     
     let functionsManager: FunctionsManager
-    let db = DatabaseManager.shared
+    let db = ExpenseService.shared
     
     init(apiKey: String, model: ChatGPTModel = .gpt_hyphen_4o) {
         self.functionsManager = .init(apiKey: apiKey)
-        super.init(senderImage: "takeoutbag.and.cup.and.straw.fill", botImage: "takeoutbag.and.cup.and.straw.fill", model: model, apiKey: apiKey)
+        super.init(
+            senderImage: "takeoutbag.and.cup.and.straw.fill",
+            botImage: "takeoutbag.and.cup.and.straw.fill",
+            model: model,
+            apiKey: apiKey
+        )
+        
         self.functionsManager.addLogConfirmationCallback = { [weak self] isConfirmed, props in
-            guard let self, let id = props.messageID, let index = self.messages.firstIndex(where: { $0.id == id }) else {
+            guard let self,
+                  let id = props.messageID,
+                  let index = self.messages.firstIndex(where: { $0.id == id }) else { return }
+            
+            // If user cancels, update immediately (no async work)
+            if !isConfirmed {
+                var messageRow = self.messages[index]
+                let response = AIAssistantResponse(
+                    text: "Ok, I won’t be adding this log",
+                    type: .addExpenseLog(.init(log: props.log,
+                                               messageID: id,
+                                               userConfirmation: .cancelled,
+                                               confirmationCallback: props.confirmationCallback))
+                )
+                messageRow.response = .customContent({ AIAssistantResponseView(response: response) })
+                self.messages[index] = messageRow
                 return
             }
-            var messageRow = self.messages[index]
-            let text: String
-            if isConfirmed {
-                try? self.db.add(log: props.log)
-                text = "Sure, i've added this log to your expenses list"
-            } else {
-                text = "Ok, i won't be adding this log"
+            
+            // User confirmed — perform async API call
+            Task {
+                let responseText: String
+                do {
+                    guard let user = await AuthManager.shared.currentUser else {
+                        throw NetworkError.unauthorized
+                    }
+                    let request = ExpenseRequest(from: props.log, userId: user.id)
+                    _ = try await ExpenseService.shared.createExpense(request)
+                    responseText = "Sure, I’ve added this log to your expenses list"
+                } catch {
+                    responseText = "I couldn’t add the log (network/error)."
+                }
+                
+                await MainActor.run {
+                    // Re-lookup index in case messages changed
+                    guard let idx = self.messages.firstIndex(where: { $0.id == id }) else { return }
+                    var messageRow = self.messages[idx]
+                    let response = AIAssistantResponse(
+                        text: responseText,
+                        type: .addExpenseLog(.init(log: props.log,
+                                                   messageID: id,
+                                                   userConfirmation: .confirmed,
+                                                   confirmationCallback: props.confirmationCallback))
+                    )
+                    messageRow.response = .customContent({ AIAssistantResponseView(response: response) })
+                    self.messages[idx] = messageRow
+                }
             }
-            
-            let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: id, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))
-            
-            messageRow.response = .customContent({ AIAssistantResponseView(response: response) })
-            self.messages[index] = messageRow
         }
     }
+    
     
     @MainActor
     override func sendTapped() async {
@@ -83,7 +122,7 @@ class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView> {
         messageRow.isPrompting = false
         self.messages[self.messages.count - 1] = messageRow
         isPrompting = false
-
+        
     }
     
 }

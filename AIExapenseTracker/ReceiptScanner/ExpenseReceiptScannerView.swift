@@ -15,7 +15,7 @@ struct ExpenseReceiptScannerView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     var body: some View {
-        ReceiptPickerScannerView(apiKey: apiKey, scanStatus: $scanStatus)
+        ReceiptPickerScannerView(apiKey: aiExpenseKey, scanStatus: $scanStatus)
             .sheet(item: $addReceiptToExpenseSheetItem) {
                 AddReceiptToExpenseConfirmationView(vm: .init(scanResult: $0))
                     .frame(minWidth: horizontalSizeClass == .regular ? 960 : nil, minHeight: horizontalSizeClass == .regular ? 512 : nil)

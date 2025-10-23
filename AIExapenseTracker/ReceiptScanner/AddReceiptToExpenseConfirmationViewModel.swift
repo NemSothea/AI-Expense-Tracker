@@ -12,7 +12,8 @@ import Foundation
 @Observable
 class AddReceiptToExpenseConfirmationViewModel {
     
-    let db = DatabaseManager.shared
+    let db = ExpenseService.shared
+    
     let scanResult: SuccessScanResult
     let scanResultExpenseLogs: [ExpenseLog]
     
@@ -49,7 +50,7 @@ class AddReceiptToExpenseConfirmationViewModel {
             var _log = log
             _log.date = self.date
             _log.currency = self.currencyCode
-            try? db.add(log: _log)
+//            try? db.add(log: _log)
         }
     }
     

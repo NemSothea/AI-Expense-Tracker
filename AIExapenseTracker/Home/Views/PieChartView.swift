@@ -8,30 +8,6 @@
 import SwiftUI
 import Charts
 
-struct PieChartView: View {
-    let topCategories: [TopCategory]
-    let colors: [Color]
-    
-    var body: some View {
-        Chart(topCategories, id: \.categoryId) { category in
-            SectorMark(
-                angle: .value("Amount", category.totalAmount),
-                innerRadius: .ratio(0.5), // Makes it a donut chart
-                angularInset: 1.5
-            )
-            .foregroundStyle(by: .value("Category", category.name))
-            .annotation(position: .overlay) {
-                Text("\(Int(category.pctOfTotal))%")
-                    .font(.caption2)
-                    .fontWeight(.bold)
-                    .foregroundColor(.white)
-            }
-        }
-        .chartForegroundStyleScale(range: colors)
-        .frame(height: 200)
-        .padding()
-    }
-}
 
 // Alternative: Custom Pie Chart without Charts framework
 struct CustomPieChartView: View {

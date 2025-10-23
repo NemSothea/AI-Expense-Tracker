@@ -5,6 +5,8 @@
 //  Created by sothea007 on 20/10/25.
 //
 
+import Foundation
+
 // MARK: - Expense Model
 struct Expense: Codable, Identifiable, Sendable {
     let id: Int
@@ -55,4 +57,23 @@ struct CategoryExpense: Codable, Sendable {
     let category: String
     let totalAmount: Double
     let percentage: Double
+}
+
+extension ExpenseRequest {
+    init(from log: ExpenseLog, userId: Int) {
+        self.userId = userId
+        self.categoryId = Category(rawValue: log.category)?.backendId ?? 0
+        self.amount = log.amount
+        self.description = log.name
+        self.expenseDate = log.date.formattedForAPI
+    }
+}
+extension Date {
+    var formattedForAPI: String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        formatter.locale = Locale(identifier: "en_US_POSIX")
+        formatter.timeZone = TimeZone(secondsFromGMT: 0)
+        return formatter.string(from: self)
+    }
 }
