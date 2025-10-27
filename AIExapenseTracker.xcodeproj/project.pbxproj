@@ -10,6 +10,7 @@
 		1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1639BE4B2EA679D400DAA623 /* Alamofire */; };
 		16516CDB2EA7E6470030BE9B /* AIReceiptScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 16516CDA2EA7E6470030BE9B /* AIReceiptScanner */; };
 		166593AE2D07FDFB005F9856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 166593AB2D07FDFB005F9856 /* README.md */; };
+		169730362EAF758200A9A2DE /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 169730352EAF758200A9A2DE /* SimpleKeychain */; };
 		16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */ = {isa = PBXBuildFile; productRef = 16D896862D1D21D900561032 /* ChatGPTUI */; };
 /* End PBXBuildFile section */
 
@@ -77,6 +78,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				169730362EAF758200A9A2DE /* SimpleKeychain in Frameworks */,
 				1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */,
 				16516CDB2EA7E6470030BE9B /* AIReceiptScanner in Frameworks */,
 				16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */,
@@ -138,6 +140,7 @@
 				16D896862D1D21D900561032 /* ChatGPTUI */,
 				1639BE4B2EA679D400DAA623 /* Alamofire */,
 				16516CDA2EA7E6470030BE9B /* AIReceiptScanner */,
+				169730352EAF758200A9A2DE /* SimpleKeychain */,
 			);
 			productName = AIExapenseTracker;
 			productReference = 1665937C2D07FC91005F9856 /* AIExapenseTracker.app */;
@@ -171,6 +174,7 @@
 				16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */,
 				1639BE4A2EA679D400DAA623 /* XCRemoteSwiftPackageReference "Alamofire" */,
 				16516CD92EA7E6470030BE9B /* XCRemoteSwiftPackageReference "AIReceiptScanner" */,
+				169730342EAF758200A9A2DE /* XCRemoteSwiftPackageReference "SimpleKeychain" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1665937D2D07FC91005F9856 /* Products */;
@@ -446,6 +450,14 @@
 				minimumVersion = 1.0.4;
 			};
 		};
+		169730342EAF758200A9A2DE /* XCRemoteSwiftPackageReference "SimpleKeychain" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/auth0/SimpleKeychain.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 1.3.0;
+			};
+		};
 		16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/alfianlosari/ChatGPTUI";
@@ -466,6 +478,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 16516CD92EA7E6470030BE9B /* XCRemoteSwiftPackageReference "AIReceiptScanner" */;
 			productName = AIReceiptScanner;
+		};
+		169730352EAF758200A9A2DE /* SimpleKeychain */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 169730342EAF758200A9A2DE /* XCRemoteSwiftPackageReference "SimpleKeychain" */;
+			productName = SimpleKeychain;
 		};
 		16D896862D1D21D900561032 /* ChatGPTUI */ = {
 			isa = XCSwiftPackageProductDependency;

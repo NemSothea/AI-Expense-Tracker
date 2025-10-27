@@ -9,8 +9,7 @@ import SwiftUI
 import ChatGPTUI
 
 #warning("Don't commit this api key to git")
-let aiExpenseKey =
-"your api key"
+let aiExpenseKey = ""
 
 enum ChatType : String,CaseIterable, Identifiable {
     

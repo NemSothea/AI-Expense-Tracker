@@ -106,7 +106,8 @@ struct IntroductionView: View {
                         .padding(.top, 8)
                     }
                 }
-                .tabViewStyle(.page(indexDisplayMode: .automatic))
+                .tabViewStyle(.automatic)
+                .pageTabViewStyle()
                 .animation(.easeInOut, value: selection)
                 .padding(.bottom, 8)
                 
@@ -162,5 +163,15 @@ struct IntroductionView: View {
         }
         .tint(.blue) // global accent
         .accessibilityElement(children: .contain)
+    }
+}
+
+extension View {
+    func pageTabViewStyle() -> some View {
+        #if os(iOS)
+        return self.tabViewStyle(.page(indexDisplayMode: .automatic))
+        #else
+        return self.tabViewStyle(.automatic)
+        #endif
     }
 }

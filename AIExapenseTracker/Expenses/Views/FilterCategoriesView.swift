@@ -7,6 +7,15 @@
 
 import SwiftUI
 
+//
+//  FilterCategoriesView.swift
+//  AIExapenseTracker
+//
+//  Created by sothea007 on 10/12/24.
+//
+
+import SwiftUI
+
 struct FilterCategoriesView: View {
     
     @Binding var selectedCategories: Set<Category>
@@ -14,39 +23,49 @@ struct FilterCategoriesView: View {
     
     var body: some View {
         VStack {
-            ScrollView(.horizontal) {
-                HStack(spacing:8) {
-                    
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 8) {
                     ForEach(categories) { category in
-                        FilterButtonView(category: category, isSelected: self.selectedCategories.contains(category), onTap: self.onTap)
+                        FilterButtonView(
+                            category: category,
+                            isSelected: self.selectedCategories.contains(category),
+                            onTap: self.onTap
+                        )
                     }
                 }
                 .padding(.horizontal)
             }
-            if selectedCategories.count > 0 {
+            .frame(height: 50) // ⬅️ Added fixed height for consistency
+            
+            if !selectedCategories.isEmpty {
                 Button(role: .destructive) {
-                    
                     self.selectedCategories.removeAll()
-                    
                 } label: {
-                    
-                    Text("Clear all filter selection \(self.selectedCategories.count)")
+                    #if os(macOS)
+                    HStack {
+                        Image(systemName: "xmark.circle.fill")
+                        Text("Clear all filters (\(self.selectedCategories.count))")
+                    }
+                    #else
+                    Text("Clear all filters (\(self.selectedCategories.count))")
+                    #endif
                 }
-
+                .buttonStyle(.plain) // ⬅️ Important for macOS
+                .padding(.bottom, 8)
             }
         }
+        .padding(.vertical, 8)
+        .background(Color.systemGray6) // ⬅️ Use your system color
     }
     
     func onTap(category: Category) {
         if selectedCategories.contains(category) {
             selectedCategories.remove(category)
-        }else {
+        } else {
             selectedCategories.insert(category)
         }
     }
-    
 }
-
 
 struct FilterButtonView: View {
     var category: Category
@@ -54,33 +73,34 @@ struct FilterButtonView: View {
     var onTap: (Category) -> ()
     
     var body: some View {
-        HStack(spacing: 6) {
-            Image(systemName: category.systemNameIcon)
-                .font(.caption)
-                .foregroundColor(isSelected ? .white : category.color)
-            
-            Text(category.rawValue.capitalized)
-                .font(.caption)
-                .fixedSize(horizontal: true, vertical: true)
-        }
-        .padding(.horizontal, 12)
-        .padding(.vertical, 6)
-        .background {
-            RoundedRectangle(cornerRadius: 16)
-                .stroke(isSelected ? category.color : Color.gray, lineWidth: 1)
-                .overlay {
-                    RoundedRectangle(cornerRadius: 16)
-                        .foregroundColor(isSelected ? category.color : Color.clear)
-                }
-        }
-        .frame(height: 32)
-        .onTapGesture {
+        Button {
             self.onTap(self.category)
+        } label: {
+            HStack(spacing: 6) {
+                Image(systemName: category.systemNameIcon)
+                    .font(.caption)
+                    .foregroundColor(isSelected ? .white : category.color)
+                
+                Text(category.rawValue.capitalized)
+                    .font(.caption)
+                    .fixedSize(horizontal: true, vertical: true)
+            }
+            .padding(.horizontal, 12)
+            .padding(.vertical, 6)
+            .background {
+                RoundedRectangle(cornerRadius: 16)
+                    .stroke(isSelected ? category.color : Color.gray, lineWidth: 1)
+                    .overlay {
+                        RoundedRectangle(cornerRadius: 16)
+                            .foregroundColor(isSelected ? category.color : Color.clear)
+                    }
+            }
+            .frame(height: 32)
         }
+        .buttonStyle(.plain) // ⬅️ Important for macOS
         .foregroundColor(isSelected ? .white : Color.primary)
     }
 }
-
 
 //#Preview {
 //    

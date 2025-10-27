@@ -72,12 +72,10 @@ struct LoginView: View {
             Image(systemName: "envelope")
                 .foregroundColor(.gray)
             TextField("Enter your email", text: $viewModel.email)
-                .autocapitalization(.none)
-                .keyboardType(.emailAddress)
-                .textContentType(.emailAddress)
+                .emailTextField()
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.systemGray6)
         .cornerRadius(10)
     }
     
@@ -100,7 +98,7 @@ struct LoginView: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.systemGray6)
         .cornerRadius(10)
     }
     
@@ -144,6 +142,20 @@ struct LoginView: View {
         }
     }
 }
+
+extension View {
+    func emailTextField() -> some View {
+        #if os(iOS)
+        return self
+            .autocapitalization(.none)
+            .keyboardType(.emailAddress)
+            .textContentType(.emailAddress)
+        #else
+        return self
+        #endif
+    }
+}
+
 
 //#Preview {
 //    LoginView(

@@ -5,13 +5,16 @@
 //  Created by sothea007 on 20/10/25.
 //
 
-
 import SwiftUI
 import Charts
 
 struct AnimatedDashboardHomeView: View {
     @State private var vm = DashboardViewModel()
     @State private var isRefreshing = false
+    @State private var showingSessionExpiredAlert = false
+    
+    // Add auth manager to handle logout
+    @EnvironmentObject private var authManager: AuthManager
     
     // Chart colors
     private let chartColors: [Color] = [
@@ -36,6 +39,23 @@ struct AnimatedDashboardHomeView: View {
             .navigationTitle("Dashboard")
             .refreshable {
                 await refreshData()
+            }
+            .alert("Session Expired", isPresented: $showingSessionExpiredAlert) {
+                Button("OK") {
+                    // Perform logout when user acknowledges
+                    authManager.logout()
+                }
+            } message: {
+                Text("Your session has expired. Please log in again.")
+            }
+            .onChange(of: vm.error) { oldValue, newValue in
+                // Check if error indicates session expiration
+                if let error = newValue,
+                   error.lowercased().contains("please login") ||
+                   error.lowercased().contains("session expired") ||
+                   error.lowercased().contains("unauthorized") {
+                    showingSessionExpiredAlert = true
+                }
             }
         }
         .task {
@@ -160,7 +180,7 @@ struct AnimatedDashboardHomeView: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.systemGray6)
         .cornerRadius(12)
     }
     
@@ -243,11 +263,11 @@ struct AnimatedDashboardHomeView: View {
             }
         }
         .padding()
-        .background(Color(.systemGray6))
+        .background(Color.systemGray6)
         .cornerRadius(12)
     }
     
-    // MARK: - Animated Error View
+    // MARK: - Updated Animated Error View with Session Expiration Handling
     private func animatedErrorView(error: String) -> some View {
         VStack(spacing: 16) {
             Image(systemName: "exclamationmark.triangle")
@@ -263,18 +283,29 @@ struct AnimatedDashboardHomeView: View {
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
             
-            Button("Try Again") {
-                Task {
-                    await refreshData()
+            // Only show retry button for non-session expiration errors
+            if !error.lowercased().contains("please login") &&
+               !error.lowercased().contains("session expired") {
+                Button("Try Again") {
+                    Task {
+                        await refreshData()
+                    }
                 }
-            }
-            .buttonStyle(.borderedProminent)
-            .disabled(isRefreshing)
-            .overlay {
-                if isRefreshing {
-                    ProgressView()
-                        .scaleEffect(0.8)
+                .buttonStyle(.borderedProminent)
+                .disabled(isRefreshing)
+                .overlay {
+                    if isRefreshing {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    }
                 }
+            } else {
+                // For session expiration, show login message
+                Button("Log In Again") {
+                    authManager.logout()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
             }
         }
         .padding()

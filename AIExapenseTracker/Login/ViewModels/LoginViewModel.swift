@@ -5,7 +5,6 @@
 //  Created by sothea007 on 20/10/25.
 //
 
-
 import SwiftUI
 import Alamofire
 
@@ -39,13 +38,13 @@ final class LoginViewModel: ObservableObject {
                 email: email,
                 password: password
             )
-            await saveAuthData(loginResponse)
+            await saveAuthData(loginResponse, password: password)
             return true
         } catch let networkError as NetworkError {
             error = networkError.localizedDescription
             return false
         } catch {
-            print("An unexpected error occurred")
+             print("An unexpected error occurred")
             return false
         }
     }
@@ -74,8 +73,8 @@ final class LoginViewModel: ObservableObject {
         return (try? emailRegex.wholeMatch(in: email)) != nil
     }
     
-    private func saveAuthData(_ loginResponse: LoginResponse) {
-        AuthManager.shared.saveAuthData(loginResponse)
+    private func saveAuthData(_ loginResponse: LoginResponse, password: String) {
+        AuthManager.shared.saveAuthData(loginResponse, password: password)
     }
 }
 
@@ -91,7 +90,6 @@ actor NetworkService {
             "email": email,
             "password": password
         ]
-        
         
         return try await withCheckedThrowingContinuation { continuation in
             AF.request(
@@ -118,5 +116,24 @@ actor NetworkService {
     }
 }
 
-
-
+// MARK: - Network Error Extension
+extension NetworkError {
+    var isUnauthorized: Bool {
+        switch self {
+        case .serverError(let message):
+            return message.lowercased().contains("unauthorized") ||
+                   message.lowercased().contains("token") ||
+                   message.lowercased().contains("expired") ||
+                   message.lowercased().contains("please login") ||
+                   message.lowercased().contains("login again")
+        case .alamofireError(let afError):
+            // Check for HTTP status code 401
+            if let statusCode = afError.responseCode {
+                return statusCode == 401
+            }
+            return false
+        default:
+            return false
+        }
+    }
+}

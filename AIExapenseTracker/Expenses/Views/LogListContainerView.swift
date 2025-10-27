@@ -20,31 +20,36 @@ struct LogListContainerView: View {
             LogListView(vm: $vm)
         }
         .toolbar {
+            #if os(macOS)
+            ToolbarItem(placement: .primaryAction) {
+                Button {
+                    vm.isLogFormPresented = true
+                } label: {
+                    HStack {
+                        Image(systemName: "plus")
+                        Text("Add Expense")
+                    }
+                }
+            }
+            #else
             ToolbarItem {
                 Button {
                     vm.isLogFormPresented = true
                 } label: {
-#if os(macOS)
-                    HStack {
-                        Image(systemName: "plus")
-                            .symbolRenderingMode(.monochrome)
-                            .tint(.accentColor)
-                        Text("Add Expense")
-                    }
-                    .foregroundStyle(Color.accentColor)
-#else
                     Text("Add")
-#endif
                 }
             }
+            #endif
         }
         .sheet(isPresented: $vm.isLogFormPresented) {
             LogFormView(vm: .init(logListVM: vm))
         }
         
-#if !os(macOS)
+        #if !os(macOS)
         .navigationBarTitle("AI Expense Tracker", displayMode: .inline)
-#endif
+        #else
+        .navigationTitle("AI Expense Tracker")
+        #endif
     }
 }
 

@@ -71,26 +71,24 @@ struct ContentView: View {
                     Label("Dashboard", systemImage: "house.fill")
                 }
                 
-                NavigationLink(destination: LogListView(vm: $vm)) {
-                    Label("Exspense", systemImage: "tray")
+                NavigationLink(destination: LogListContainerView(vm: $vm)) { // ⬅️ Fixed this line
+                    Label("Expense", systemImage: "tray")
                 }
                 NavigationLink(destination: AIAssitantView()) {
                     Label("AI Assistant", systemImage: "waveform")
                 }
                 
-                NavigationLink(destination:  EnhancedAccountView(onLogout: onLogout)) {
+                NavigationLink(destination: EnhancedAccountView(onLogout: onLogout)) {
                     Label("Account", systemImage: "person.circle")
                 }
             }
-            
-            
-        } detail : {
+        } detail: {
             AnimatedDashboardHomeView()
         }
         .navigationTitle("AI Expenses Tracker")
     }
 }
 
-#Preview {
-    ContentView()
-}
+//#Preview {
+//    ContentView()
+//}
