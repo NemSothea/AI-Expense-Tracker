@@ -1,5 +1,3 @@
-The issue is with the special characters in your section headers. The GitHub Markdown anchor links don't work well with emojis and special characters. Here's the fixed version:
-
 # AI Expense Tracker 📱💰
 
 <div align="center">
@@ -25,7 +23,7 @@ AI Expense Tracker is a comprehensive financial management solution that leverag
 - **Voice Control**: Hands-free expense creation via voice commands
 - **Smart Analytics**: Interactive charts and spending insights
 
-## ✨ Features
+## ✨ Features <a id="features"></a>
 
 ### 🤖 Core Capabilities
 | Feature | Description | Status |
@@ -60,7 +58,7 @@ AI Expense Tracker is a comprehensive financial management solution that leverag
 └─────────────────┘    └──────────────────┘
 ```
 
-## 📥 Installation
+## 📥 Installation <a id="installation"></a>
 
 ### Prerequisites
 - **Java 21+**
@@ -137,7 +135,7 @@ open AI-Expense-Tracker/AIExapenseTracker.xcodeproj
    - Select target device/simulator
    - Press `Cmd + R` to build and run
 
-## 📚 API Documentation
+## 📚 API Documentation <a id="api-documentation"></a>
 
 ### Base URL
 ```
@@ -244,17 +242,17 @@ Access Swagger UI at: http://localhost:8080/swagger-ui/index.html
 - **Budget Alerts**: Set monthly budgets and receive notifications
 - **Multi-Currency**: Support for different currencies
 
-## 📦 Processflow
+## 📦 Processflow <a id="processflow"></a>
 
 ![Process Flow](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Process%20Flow%20Mobile.png)
 
-## 🔗 Demo
+## 🔗 Demo <a id="demo"></a>
 
 ### 📱 Centralized data access across multiple devices, iPhone, iPad, Mac, Web application 
 
 ![Demo](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Mobile_Demo.gif)
 
-## 👥 Team
+## 👥 Team <a id="team"></a>
 
 | Role | Member | Responsibilities |
 |------|--------|------------------|
