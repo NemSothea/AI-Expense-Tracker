@@ -12,6 +12,7 @@ final class AuthManager: ObservableObject {
     static let shared = AuthManager()
     
     @Published var isLoggedIn: Bool = false
+    
     @Published var currentUser: User?
     var isSessionExpired = false
     
@@ -40,11 +41,15 @@ final class AuthManager: ObservableObject {
     }
     
     func logout(isSessionExpired: Bool = false) {
+        print("🔐 Logout called - isSessionExpired: \(isSessionExpired)")
+        
         keychain.deleteToken()
         UserDefaults.standard.removeObject(forKey: "userData")
         self.isSessionExpired = isSessionExpired
         isLoggedIn = false
-        currentUser = nil        
+        currentUser = nil
+  
+        print("🔐 After logout - isSessionExpired: \(isSessionExpired)")
     }
     
     nonisolated func getAuthToken() -> String? {

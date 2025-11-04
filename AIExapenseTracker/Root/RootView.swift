@@ -42,9 +42,11 @@ struct RootView: View {
                     route = .login
                     
                     // Only show alert if it was a session expiration
-                    if authManager.isSessionExpired {
+                    if authManager.isSessionExpired && route != .login {
                         showingSessionExpiredAlert = true
                         authManager.isSessionExpired = false  // Reset for next time
+                    }else {
+                        print("✅ Normal logout - no alert needed")
                     }
                 } else if newValue && !oldValue {
                     route = .content

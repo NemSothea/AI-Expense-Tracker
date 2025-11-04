@@ -49,6 +49,7 @@ class DashboardViewModel {
             self.error = "Failed to load dashboard"
         }
     }
+    
     @MainActor
     private func handleNetworkError(_ error: NetworkError) async {
         if error.isUnauthorized {
@@ -87,8 +88,9 @@ class DashboardViewModel {
                     dashboardData = try await expenseService.getDashboard(startDate: nil, endDate: nil)
                     error = nil
                 } else {
-                    self.error = (error as? NetworkError)?.localizedDescription ?? "Session expired. Please login again."
+                    self.error = "Session expired. Please login again."
                     shouldShowLogin = true
+                    dashboardData = nil
                     // Trigger logout after a delay to show the message
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.authManager.logout()
@@ -96,7 +98,7 @@ class DashboardViewModel {
                 }
             } catch {
               
-                self.error = (error as? NetworkError)?.localizedDescription ?? "Session expired. Please login again."
+                self.error = (error as? NetworkError)?.localizedDescription
                 shouldShowLogin = true
                 // Trigger logout after a delay to show the message
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -105,8 +107,9 @@ class DashboardViewModel {
             }
         }
         
-        func clearError() {
-            error = nil
-            shouldShowLogin = false
-        }
+    func clearError() {
+        print("🧹 Clearing dashboard errors")
+        error = nil
+        shouldShowLogin = false
+    }
 }

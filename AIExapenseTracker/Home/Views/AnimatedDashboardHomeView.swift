@@ -22,6 +22,8 @@ struct AnimatedDashboardHomeView: View {
     // Add auth manager to handle logout
     @EnvironmentObject private var authManager: AuthManager
     
+  
+    
     // Chart colors
     private let chartColors: [Color] = [
         .blue, .green, .orange, .purple, .red,
@@ -49,12 +51,19 @@ struct AnimatedDashboardHomeView: View {
             .alert("Session Expired", isPresented: $showingSessionExpiredAlert) {
                 Button("OK") {
                     // Perform logout when user acknowledges
-                    authManager.logout()
+                    
+                    authManager.logout(isSessionExpired: true)
                 }
             } message: {
                 Text("\(vm.error ?? "Your session has expired. Please log in again.")")
             }
             .onChange(of: vm.error) { oldValue, newValue in
+                
+                guard authManager.isLoggedIn else {
+                     print("🚫 Ignoring error because user is not logged in")
+                     return
+                 }
+                
                 // Check if error indicates session expiration
                 if let error = newValue,
                    error.lowercased().contains("please login") ||
@@ -72,6 +81,10 @@ struct AnimatedDashboardHomeView: View {
                 }
             }
             hasAppeared = true
+        }
+        .onDisappear {
+            // Clear errors when leaving the dashboard view
+            vm.clearError()
         }
         .task {
             if vm.dashboardData == nil {
