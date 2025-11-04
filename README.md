@@ -242,11 +242,12 @@ Access Swagger UI at: http://localhost:8080/swagger-ui/index.html
 - **Budget Alerts**: Set monthly budgets and receive notifications
 - **Multi-Currency**: Support for different currencies
 
-## 👥 Processflow
+## 📦  Processflow
 
 ![Process Flow](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Process%20Flow%20Mobile.png)
 
-## 👥 Demo
+## 🔗  Demo
+### 📱 Centralized data access across multiple devices, iPhone, iPad, Mac, Web application 
 
 ![Demo](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Mobile_Demo.gif)
 
