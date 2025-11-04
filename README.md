@@ -244,6 +244,11 @@ Access Swagger UI at: http://localhost:8080/swagger-ui/index.html
 
 ## 👥 Processflow
 
+![Process Flow](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Process%20Flow%20Mobile.png)
+
+## 👥 Demo
+
+![Demo](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Mobile_Demo.gif)
 
 ## 👥 Team
 
