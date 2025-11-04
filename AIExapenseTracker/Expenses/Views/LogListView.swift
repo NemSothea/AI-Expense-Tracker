@@ -16,6 +16,9 @@ struct LogListView: View {
     @State private var showingDeleteAlert = false
     @State private var expenseToDelete: Expense?
     
+    // Add auth manager to handle logout
+    @EnvironmentObject private var authManager: AuthManager
+    
     var body: some View {
         listView
             .sheet(item: $vm.expenseToEdit, onDismiss: {
@@ -47,7 +50,12 @@ struct LogListView: View {
                 if vm.isLoading && vm.expenses.isEmpty {
                     ProgressView("Loading expenses...")
                 } else if vm.expenses.isEmpty && !vm.isLoading {
-                    emptyStateView
+                    if let error = vm.error {
+                        animatedErrorView(error: error)
+                    }else {
+                        emptyStateView
+                    }
+                 
                 }
             }
             .task {
@@ -91,6 +99,50 @@ struct LogListView: View {
         isRefreshing = true
         await vm.loadExpenses(isRefreshing: true)
         isRefreshing = false
+    }
+    // MARK: - Updated Animated Error View with Session Expiration Handling
+    private func animatedErrorView(error: String) -> some View {
+        VStack(spacing: 16) {
+            Image(systemName: "exclamationmark.triangle")
+                .font(.system(size: 40))
+                .foregroundColor(.orange)
+                .scaleEffect(isRefreshing ? 1.2 : 1.0)
+            
+            Text("Failed to load Expense List")
+                .font(.headline)
+            
+            Text(error)
+                .font(.caption)
+                .foregroundColor(.secondary)
+                .multilineTextAlignment(.center)
+            
+            // Only show retry button for non-session expiration errors
+            if !error.lowercased().contains("please login") &&
+               !error.lowercased().contains("session expired") {
+                Button("Try Again") {
+                    Task {
+                        await refreshData()
+                    }
+                }
+                .buttonStyle(.borderedProminent)
+                .disabled(isRefreshing)
+                .overlay {
+                    if isRefreshing {
+                        ProgressView()
+                            .scaleEffect(0.8)
+                    }
+                }
+            } else {
+                // For session expiration, show login message
+                Button("Log In Again") {
+                    authManager.logout()
+                }
+                .buttonStyle(.borderedProminent)
+                .tint(.red)
+            }
+        }
+        .padding()
+        .frame(maxWidth: .infinity)
     }
     
     private var emptyStateView: some View {

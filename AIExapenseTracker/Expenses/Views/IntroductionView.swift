@@ -63,15 +63,15 @@ struct IntroductionView: View {
                 
                 // Logo / App mark
                 HStack {
-                    Image(systemName: "brain")
-                        .foregroundColor(.white)
-                        .font(.system(size: 60))
-                        .accessibilityHidden(true)
+                    Image("AI Expense")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 100, height: 100)
+                        .shadow(radius: 10)
                         .padding()
                 }
-//                .background(Color.blue)
+
                 .cornerRadius(10)
-                .frame(width: 64,height: 64)
                 
                 Text("AI Expense Tracker")
                     .font(.largeTitle.bold())

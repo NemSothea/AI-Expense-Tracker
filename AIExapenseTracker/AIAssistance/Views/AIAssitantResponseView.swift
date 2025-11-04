@@ -40,12 +40,18 @@ struct AddExpenseLogView: View {
                 if let confirmationCallback = props.confirmationCallback {
                     HStack {
                         Button("Confirm") {
-                            confirmationCallback(true, props)
+                            Task {
+                                await confirmationCallback(true, props)
+                            }
+                          
                         }
                         .buttonStyle(BorderedProminentButtonStyle())
                         
                         Button("Cancel", role: .destructive) {
-                            confirmationCallback(false, props)
+                            Task {
+                                await confirmationCallback(false, props)
+                            }
+                         
                         }
                         .buttonStyle(BorderedProminentButtonStyle())
                         .tint(.red)

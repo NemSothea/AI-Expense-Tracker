@@ -13,6 +13,7 @@ final class AuthManager: ObservableObject {
     
     @Published var isLoggedIn: Bool = false
     @Published var currentUser: User?
+    var isSessionExpired = false
     
     private let keychain = KeychainService()
     
@@ -38,11 +39,12 @@ final class AuthManager: ObservableObject {
         isLoggedIn = true
     }
     
-    func logout() {
+    func logout(isSessionExpired: Bool = false) {
         keychain.deleteToken()
         UserDefaults.standard.removeObject(forKey: "userData")
+        self.isSessionExpired = isSessionExpired
         isLoggedIn = false
-        currentUser = nil
+        currentUser = nil        
     }
     
     nonisolated func getAuthToken() -> String? {
@@ -50,7 +52,7 @@ final class AuthManager: ObservableObject {
     }
     
     private func checkExistingAuth() {
-        if let authToken = keychain.getToken(),
+        if let _ = keychain.getToken(),
            let userData = UserDefaults.standard.data(forKey: "userData"),
            let user = try? JSONDecoder().decode(User.self, from: userData) {
             self.currentUser = user

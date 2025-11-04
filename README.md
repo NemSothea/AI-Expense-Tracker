@@ -9,7 +9,7 @@
 
 **An intelligent expense management application powered by AI**
 
-[Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Demo](#-demo) • [Team](#-team)
+[Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Processflow](#-processflow) [Demo](#-demo) • [Team](#-team)
 
 </div>
 
@@ -242,6 +242,8 @@ Access Swagger UI at: http://localhost:8080/swagger-ui/index.html
 - **Budget Alerts**: Set monthly budgets and receive notifications
 - **Multi-Currency**: Support for different currencies
 
+## 👥 Processflow
+
 ## 👥 Team
 
 | Role | Member | Responsibilities |
@@ -370,3 +372,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 *Simplifying financial management through AI power*
 
 </div>
+
+## 🔗 Commit Emoji :
+1. https://gist.github.com/parmentf/035de27d6ed1dce0b36a
+2. https://gitmoji.dev/

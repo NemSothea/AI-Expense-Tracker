@@ -20,21 +20,32 @@ class DashboardViewModel {
     
     @MainActor
     func loadDashboard() async {
+        print("🔄 loadDashboard started")
+        
         isLoading = true
         error = nil
         
-        defer { isLoading = false }
+        defer {
+            isLoading = false
+            print("🔄 loadDashboard finished")
+        }
         
         do {
-            dashboardData = try await expenseService.getDashboard()
+            dashboardData = try await expenseService.getDashboard(startDate: nil, endDate: nil)
+            
         } catch let networkError as NetworkError {
             if networkError.isUnauthorized {
                 // Token expired, try to refresh
                 await handleTokenRefreshAndRetry()
             } else {
+                dashboardData = nil
                 await handleNetworkError(networkError)
             }
+        } catch let urlError as URLError {
+            dashboardData = nil
+            await handleURLError(urlError)
         } catch {
+            dashboardData = nil
             self.error = "Failed to load dashboard"
         }
     }
@@ -46,6 +57,26 @@ class DashboardViewModel {
             self.error = error.localizedDescription
         }
     }
+    @MainActor
+    private func handleURLError(_ urlError: URLError) async {
+        switch urlError.code {
+        case .cannotConnectToHost: // Error -1004
+            self.error = "Cannot connect to server. Please check:\n• Server is not running."
+            
+        case .notConnectedToInternet:
+            self.error = "No internet connection. Please check your network."
+            
+        case .timedOut:
+            self.error = "Connection timed out. Server might be busy."
+            
+        case .cannotFindHost:
+            self.error = "Cannot find the server. Please check the server address."
+            
+        default:
+            self.error = "Network error: \(urlError.localizedDescription)"
+        }
+    }
+
     
     @MainActor
         private func handleTokenRefreshAndRetry() async {
@@ -53,10 +84,10 @@ class DashboardViewModel {
                 let refreshSuccess = try await authManager.refreshToken()
                 if refreshSuccess {
                     // Retry the dashboard request with new token
-                    dashboardData = try await expenseService.getDashboard()
+                    dashboardData = try await expenseService.getDashboard(startDate: nil, endDate: nil)
                     error = nil
                 } else {
-                    error = "Session expired. Please login again."
+                    self.error = (error as? NetworkError)?.localizedDescription ?? "Session expired. Please login again."
                     shouldShowLogin = true
                     // Trigger logout after a delay to show the message
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
@@ -64,7 +95,8 @@ class DashboardViewModel {
                     }
                 }
             } catch {
-                self.error = "Session expired. Please login again."
+              
+                self.error = (error as? NetworkError)?.localizedDescription ?? "Session expired. Please login again."
                 shouldShowLogin = true
                 // Trigger logout after a delay to show the message
                 DispatchQueue.main.asyncAfter(deadline: .now() + 2) {

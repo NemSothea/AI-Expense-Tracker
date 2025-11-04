@@ -12,8 +12,6 @@ import Foundation
 @Observable
 class AddReceiptToExpenseConfirmationViewModel {
     
-    let db = ExpenseService.shared
-    
     let scanResult: SuccessScanResult
     let scanResultExpenseLogs: [ExpenseLog]
     
@@ -45,12 +43,20 @@ class AddReceiptToExpenseConfirmationViewModel {
         self.numberFormatter.currencyCode = self.currencyCode
     }
     
-    func save() {
-        expenseLogs.forEach { log in
-            var _log = log
-            _log.date = self.date
-            _log.currency = self.currencyCode
-//            try? db.add(log: _log)
+    func save() async throws {
+        // Get current user
+        guard let user = await AuthManager.shared.currentUser else {
+            throw NetworkError.unauthorized
+        }
+        
+        // Save each expense log
+        for log in expenseLogs {
+            var updatedLog = log
+            updatedLog.date = self.date
+            updatedLog.currency = self.currencyCode
+            
+            let request = ExpenseRequest(from: updatedLog, userId: user.id)
+            _ = try await ExpenseService.shared.createExpense(request)
         }
     }
     

@@ -15,13 +15,13 @@ import Foundation
 class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView> {
     
     let functionsManager: FunctionsManager
-    let db = ExpenseService.shared
+   
     
     init(apiKey: String, model: ChatGPTModel = .gpt_hyphen_4o) {
         self.functionsManager = .init(apiKey: apiKey)
         super.init(
-            senderImage: "takeoutbag.and.cup.and.straw.fill",
-            botImage: "takeoutbag.and.cup.and.straw.fill",
+            senderImage: "https://avatar.iran.liara.run/public/boy",
+            botImage: "https://cdn-icons-png.flaticon.com/512/4712/4712038.png",
             model: model,
             apiKey: apiKey
         )

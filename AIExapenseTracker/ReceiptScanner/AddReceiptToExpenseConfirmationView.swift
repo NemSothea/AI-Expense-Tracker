@@ -42,8 +42,9 @@ struct AddReceiptToExpenseConfirmationView: View {
             .toolbar {
                 ToolbarItem(placement: .confirmationAction) {
                     Button("Confirm") {
-                        vm.save()
-                        presentationMode.wrappedValue.dismiss()
+                        Task {
+                            await saveAndDismiss()
+                        }
                     }
                 }
                 
@@ -114,7 +115,21 @@ struct AddReceiptToExpenseConfirmationView: View {
         .onDelete(perform: onDelete)
         
     }
-    
+    private func saveAndDismiss() async {
+        do {
+            try await vm.save()
+            // Dismiss on the main thread
+            await MainActor.run {
+                presentationMode.wrappedValue.dismiss()
+            }
+        } catch {
+            // Handle error - show alert to user
+            await MainActor.run {
+                // Show error alert here
+                print("Save failed: \(error)")
+            }
+        }
+    }
     
     func nameTextField(log: Binding<ExpenseLog>) -> some View {
         TextField(text: log.name, label: {Text("Name")})
@@ -125,9 +140,9 @@ struct AddReceiptToExpenseConfirmationView: View {
     func amountTextField(log: Binding<ExpenseLog>) -> some View {
         TextField("Amount", value: log.amount, formatter: vm.numberFormatter)
             .textFieldStyle(RoundedBorderTextFieldStyle())
-            #if !os(macOS)
+#if !os(macOS)
             .keyboardType(.numbersAndPunctuation)
-            #endif
+#endif
     }
     
     func categoryPicker(log: Binding<ExpenseLog>) -> some View {

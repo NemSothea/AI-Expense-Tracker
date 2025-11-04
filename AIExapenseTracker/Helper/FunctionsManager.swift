@@ -8,12 +8,26 @@
 import Foundation
 import ChatGPTSwift
 
-class FunctionsManager {
+final class FunctionsManager: @unchecked Sendable{
     
     let api: ChatGPTAPI
     let db = ExpenseService.shared
     
-    var addLogConfirmationCallback: AddExpenseLogConfirmationCallback?
+    private let callbackLock = NSLock()
+    private var _addLogConfirmationCallback: AddExpenseLogConfirmationCallback?
+    
+    var addLogConfirmationCallback: AddExpenseLogConfirmationCallback? {
+          get {
+              callbackLock.lock()
+              defer { callbackLock.unlock() }
+              return _addLogConfirmationCallback
+          }
+          set {
+              callbackLock.lock()
+              defer { callbackLock.unlock() }
+              _addLogConfirmationCallback = newValue
+          }
+      }
     
     static let currentDateFormatter: DateFormatter = {
         let df = DateFormatter()
@@ -128,35 +142,6 @@ class FunctionsManager {
         }
     }
     
-//    func getQuery(args: ListExpenseArgs) -> Query {
-//        var filters = [Filter]()
-//        if let startDate = args.startDate,
-//           let endDate = args.endDate {
-//            filters.append(.whereField("date", isGreaterOrEqualTo: startDate.startOfDay))
-//            filters.append(.whereField("date", isLessThanOrEqualTo: endDate.endOfDay))
-//        } else if let date = args.date {
-//            filters.append(.whereField("date", isGreaterOrEqualTo: date.startOfDay))
-//            filters.append(.whereField("date", isLessThanOrEqualTo: date.endOfDay))
-//        }
-//        
-//        if let category = args.category {
-//            filters.append(.whereField("category", isEqualTo: category))
-//        }
-//        
-//        var query = db.logsCollection.whereFilter(.andFilter(filters))
-//        let sortOrder = SortOrder(rawValue: args.sortOrder ?? "") ?? .descending
-//        query = query.order(by: "date", descending: sortOrder == .descending)
-//        
-//        if args.isDateFilterExists {
-//            if let quantityOfLogs = args.quantityOfLogs {
-//                query = query.limit(to: quantityOfLogs)
-//            }
-//        } else {
-//            let quantityOfLogs = args.quantityOfLogs ?? 100
-//            query = query.limit(to: quantityOfLogs)
-//        }
-//        return query
-//    }
 }
 
 extension FunctionsManager {
@@ -207,7 +192,7 @@ extension FunctionsManager {
             
             collected.append(contentsOf: filtered)
             page += 1
-            if page >= (pageResp.totalPages ?? Int.max) { break }
+            if page >= (pageResp.totalPages) { break }
         }
         
         // 4) Sort

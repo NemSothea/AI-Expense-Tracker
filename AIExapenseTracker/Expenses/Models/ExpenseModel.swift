@@ -46,12 +46,6 @@ struct ExpenseCategory: Codable, Identifiable, Sendable {
     let enabled: Bool
 }
 
-// MARK: - Dashboard Summary
-struct DashboardSummary: Codable, Sendable {
-    let totalExpenses: Double
-    let expensesByCategory: [CategoryExpense]
-    let recentExpenses: [Expense]
-}
 
 struct CategoryExpense: Codable, Sendable {
     let category: String

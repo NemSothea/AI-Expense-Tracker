@@ -53,7 +53,7 @@ struct AIAssitantView: View {
 
         }
 #if !os(macOS)
-.navigationBarTitle("AI Exspense Tracker",displayMode:.inline)
+.navigationBarTitle("AI Assitant Tracker",displayMode:.inline)
 #endif
     }
 }

@@ -20,7 +20,7 @@ struct ExpenseReceiptScannerView: View {
                 AddReceiptToExpenseConfirmationView(vm: .init(scanResult: $0))
                     .frame(minWidth: horizontalSizeClass == .regular ? 960 : nil, minHeight: horizontalSizeClass == .regular ? 512 : nil)
             }
-            .navigationTitle("XCA AI Receipt Scanner")
+            .navigationTitle("AI Receipt Scanner")
             #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
             #endif

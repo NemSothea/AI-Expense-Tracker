@@ -45,14 +45,15 @@ struct LoginView: View {
     private var titleSection: some View {
         VStack(spacing: 4) {
             HStack {
-                Image(systemName: "brain")
-                    .foregroundColor(.white)
-                    .font(.system(size: 40))
+                Image("AI Expense")
+                    .resizable()
+                    .aspectRatio(contentMode: .fit)
+                    .frame(width: 100, height: 100)
+                    .shadow(radius: 10)
                     .padding()
             }
-            .background(Color.blue)
             .cornerRadius(7)
-            .frame(width: 100, height: 100)
+
             
             VStack(alignment: .center) {
                 Text("AI Expense Tracker")

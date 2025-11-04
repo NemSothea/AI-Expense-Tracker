@@ -12,48 +12,80 @@ import ChatGPTSwift
 
 
 @Observable
-class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantResponseView> {
+final class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantResponseView> {
     
     let functionsManager: FunctionsManager
-    let db = ExpenseService.shared
-    
+
     init(apiKey: String, model: ChatGPTModel = .gpt_hyphen_4o) {
         self.functionsManager = .init(apiKey: apiKey)
         super.init(model: model, apiKey: apiKey)
         self.functionsManager.addLogConfirmationCallback = { [weak self] isConfirmed, props in
-            guard let self else {
-                return
-            }
-            let text: String
-            if isConfirmed {
-                do {
-                    // 2) Map the assistant log to your API request
-                    
-                    
-//                    let req = ExpenseRequest(
-//                        userId:
-//                        name: props.log.name,
-//                        amount: props.log.amount,
-//                        categoryId: props.log.categoryEnum.backendId, // implement mapping once
-//                        date: props.log.dateText // "yyyy-MM-dd"
-//                    )
-//
-//                    // 3) Call your backend
-//                    _ = try await expenseService.createExpense(req)
-
-                    text = "Sure, I’ve added this log to your expenses list"
-                } catch {
-                    text = "I couldn’t add the log (network/error)."
+            guard let self else { return }
+            
+            await MainActor.run {
+                let text: String
+                if isConfirmed {
+                    // Handle the async operation
+                    Task {
+                        do {
+                            guard let user = await AuthManager.shared.currentUser else {
+                                throw NetworkError.unauthorized
+                            }
+                            let request = ExpenseRequest(from: props.log, userId: user.id)
+                            
+                            try? await ExpenseService.shared.createExpense(request)
+                            
+                            await MainActor.run {
+                                let response = AIAssistantResponse(
+                                    text: "Sure, i've added this log to your expenses list",
+                                    type: .addExpenseLog(.init(
+                                        log: props.log,
+                                        messageID: nil,
+                                        userConfirmation: .confirmed,
+                                        confirmationCallback: props.confirmationCallback
+                                    ))
+                                )
+                                self.updateStateWithResponse(response)
+                            }
+                        } catch {
+                            await MainActor.run {
+                                // Handle error appropriately
+                                let response = AIAssistantResponse(
+                                    text: "Sorry, there was an error adding the expense",
+                                    type: .addExpenseLog(.init(
+                                        log: props.log,
+                                        messageID: nil,
+                                        userConfirmation: .cancelled,
+                                        confirmationCallback: props.confirmationCallback
+                                    ))
+                                )
+                                self.updateStateWithResponse(response)
+                            }
+                        }
+                    }
+                    return
+                } else {
+                    text = "Ok, i won't be adding this log"
+                    let response = AIAssistantResponse(
+                        text: text,
+                        type: .addExpenseLog(.init(
+                            log: props.log,
+                            messageID: nil,
+                            userConfirmation: .cancelled,
+                            confirmationCallback: props.confirmationCallback
+                        ))
+                    )
+                    self.updateStateWithResponse(response)
                 }
-            } else {
-                text = "Ok, I won’t be adding this log"
             }
-            
-            let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: nil, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))
-            
-            if let _  = self.state.idleResponse {
-                self.state = .idle(.customContent({ AIAssistantResponseView(response: response)}))
-            }
+        }
+    }
+
+    // Helper method to update state
+    @MainActor
+    private func updateStateWithResponse(_ response: AIAssistantResponse) {
+        if self.state.idleResponse != nil {
+            self.state = .idle(.customContent({ AIAssistantResponseView(response: response) }))
         }
     }
 

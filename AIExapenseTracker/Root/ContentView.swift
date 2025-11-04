@@ -56,12 +56,20 @@ struct ContentView: View {
             .tabItem {
                 Label("AI Assistant", systemImage: "waveform")
             }.tag(2)
+            
+            NavigationStack {
+                ExpenseReceiptScannerView()
+            }
+            .tabItem {
+                Label("Receipt Scanner", systemImage: "eye")
+            }.tag(3)
+            
             NavigationStack {
                 EnhancedAccountView(onLogout: onLogout)
             }
             .tabItem {
                 Label("Profile", systemImage: "person.circle")
-            }.tag(3)
+            }.tag(4)
         }
     }
     var splitView : some View {
@@ -76,6 +84,10 @@ struct ContentView: View {
                 }
                 NavigationLink(destination: AIAssitantView()) {
                     Label("AI Assistant", systemImage: "waveform")
+                }
+                
+                NavigationLink(destination: ExpenseReceiptScannerView()) {
+                    Label("Receipt Scanner", systemImage: "eye")
                 }
                 
                 NavigationLink(destination: EnhancedAccountView(onLogout: onLogout)) {

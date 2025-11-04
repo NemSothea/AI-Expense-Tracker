@@ -40,6 +40,7 @@ let dateProp = (key: "date",
                     "description": "date of expense. always use this format as the response yyyy-MM-dd. if no year is provided just use current year"
                 ])
                 
+@MainActor
 let categoryProp = (key: "category",
                     value: [
                         "type": "string",
@@ -59,7 +60,7 @@ let endDateProp = (key: "endDate",
                     "type": "string",
                     "description": "end date. always use this format as the response yyyy-MM-dd. if no year is provided just use current year"
                    ])
-                   
+@MainActor
  let sortOrderProp = (key: "sortOrder",
                      value: [
                         "type": "string",
@@ -73,7 +74,7 @@ let quantityOfLogsProp = (key: "quantityOfLogs",
                             "description": "Number of logs to be listed"
                           ])
 
-
+@MainActor
 let chartTypeProp = (key: "chartType",
                      value: [
                         "type": "string",

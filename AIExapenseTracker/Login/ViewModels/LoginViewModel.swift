@@ -73,7 +73,7 @@ final class LoginViewModel: ObservableObject {
         return (try? emailRegex.wholeMatch(in: email)) != nil
     }
     
-    private func saveAuthData(_ loginResponse: LoginResponse, password: String) {
+    private func saveAuthData(_ loginResponse: LoginResponse, password: String) async {
         AuthManager.shared.saveAuthData(loginResponse, password: password)
     }
 }

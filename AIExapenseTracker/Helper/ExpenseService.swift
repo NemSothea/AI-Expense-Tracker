@@ -9,7 +9,7 @@ import Foundation
 import Alamofire
 
 actor ExpenseService {
-    static let shared = ExpenseService()
+    nonisolated static let shared = ExpenseService()
     
     private let baseURL = "http://localhost:8080"
     private let session: Session
@@ -21,8 +21,8 @@ actor ExpenseService {
     }
     
     // MARK: - Auth Helper
-    private func getAuthHeaders() -> HTTPHeaders? {
-        guard let token = AuthManager.shared.getAuthToken() else {
+    private func getAuthHeaders() async -> HTTPHeaders? {
+        guard let token = await AuthManager.shared.getAuthToken() else {
             return nil
         }
         return [
@@ -32,25 +32,10 @@ actor ExpenseService {
         ]
     }
     
-    // MARK: - Dashboard
-    func getDashboard() async throws -> DashboardSummary {
-        guard let headers = getAuthHeaders() else {
-            throw NetworkError.unauthorized
-        }
-        
-        return try await session.request(
-            "\(baseURL)/api/dashboard",
-            method: .get,
-            headers: headers
-        )
-        .validate()
-        .serializingDecodable(DashboardSummary.self)
-        .value
-    }
     
     // MARK: - Expenses
     func getExpenses(page: Int = 0, size: Int = 20) async throws -> PaginatedResponse<Expense> {
-        guard let headers = getAuthHeaders() else {
+        guard let headers = await getAuthHeaders() else {
             throw NetworkError.unauthorized
         }
         
@@ -76,7 +61,7 @@ actor ExpenseService {
     }
     
     func createExpense(_ request: ExpenseRequest) async throws -> Expense {
-        guard let headers = getAuthHeaders() else {
+        guard let headers = await getAuthHeaders() else {
             throw NetworkError.unauthorized
         }
         
@@ -93,7 +78,7 @@ actor ExpenseService {
     }
     
     func updateExpense(expenseId: Int, request: ExpenseRequest) async throws -> Expense {
-        guard let headers = getAuthHeaders() else {
+        guard let headers = await getAuthHeaders() else {
             throw NetworkError.unauthorized
         }
         
@@ -110,7 +95,7 @@ actor ExpenseService {
     }
     
     func deleteExpense(expenseId: Int) async throws {
-        guard let headers = getAuthHeaders() else {
+        guard let headers = await getAuthHeaders() else {
             throw NetworkError.unauthorized
         }
         
@@ -126,7 +111,7 @@ actor ExpenseService {
     
     // MARK: - Categories
     func getActiveCategories() async throws -> [ExpenseCategory] {
-        guard let headers = getAuthHeaders() else {
+        guard let headers = await getAuthHeaders() else {
             throw NetworkError.unauthorized
         }
         
@@ -144,7 +129,9 @@ actor ExpenseService {
 extension ExpenseService {
     // MARK: - Dashboard
     func getDashboard(startDate: String? = nil, endDate: String? = nil) async throws -> DashboardResponse {
-        guard let headers = getAuthHeaders() else {
+        print("🔍 getDashboard called with dates: \(startDate ?? "nil") to \(endDate ?? "nil")")
+            
+        guard let headers = await getAuthHeaders() else {
             throw NetworkError.unauthorized
         }
         
@@ -152,28 +139,62 @@ extension ExpenseService {
             throw NetworkError.unauthorized
         }
         
-        var parameters: [String: Any] = ["userId": user.id]
+        var parameters: [String: String] = ["userId": String(user.id)]
         
-        // Add optional date parameters
-        if let startDate = startDate {
-            parameters["start"] = startDate
+        // Default to last 1 year if no dates provided
+        let finalStartDate: String
+        let finalEndDate: String
+        
+        if let startDate = startDate, let endDate = endDate {
+            finalStartDate = startDate
+            finalEndDate = endDate
+        } else {
+            let calendar = Calendar.current
+            let endDate = Date()
+            let startDate = calendar.date(byAdding: .year, value: -1, to: endDate) ?? endDate
+            
+            let dateFormatter = DateFormatter()
+            dateFormatter.dateFormat = "yyyy-MM-dd"
+            
+            finalStartDate = dateFormatter.string(from: startDate)
+            finalEndDate = dateFormatter.string(from: endDate)
         }
-        if let endDate = endDate {
-            parameters["end"] = endDate
+        
+        parameters["start"] = finalStartDate
+        parameters["end"] = finalEndDate
+        parameters["topLimit"] = "5"
+        parameters["recentLimit"] = "10"
+        
+        print("🌐 Making request to: \(baseURL)/api/dashboard")
+        print("🌐 Parameters: \(parameters)")
+        
+        do {
+            let response = try await session.request(
+                "\(baseURL)/api/dashboard",
+                method: .get,
+                parameters: parameters,
+                headers: headers
+            )
+            .validate()
+            .serializingDecodable(DashboardResponse.self)
+            .value
+            
+            print("✅ Dashboard data received successfully")
+            return response
+            
+        } catch let afError as AFError {
+            print("❌ AFError: \(afError)")
+            let networkError = NetworkError.fromAFError(afError)
+            throw networkError
+            
+        } catch let urlError as URLError {
+            print("❌ URLError: \(urlError)")
+            let networkError = NetworkError.fromURLError(urlError)
+            throw networkError
+            
+        } catch {
+            print("❌ Unknown error: \(error)")
+            throw NetworkError.serverError("Unknown error: \(error.localizedDescription)")
         }
-        
-        // Add limits (you can make these parameters too if needed)
-        parameters["topLimit"] = 5
-        parameters["recentLimit"] = 10
-        
-        return try await session.request(
-            "\(baseURL)/api/dashboard",
-            method: .get,
-            parameters: parameters,
-            headers: headers
-        )
-        .validate()
-        .serializingDecodable(DashboardResponse.self)
-        .value
     }
 }

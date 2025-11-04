@@ -10,8 +10,14 @@ import Charts
 
 struct AnimatedDashboardHomeView: View {
     @State private var vm = DashboardViewModel()
+    
+    @State var logvm = LogListViewModel()
+    
     @State private var isRefreshing = false
     @State private var showingSessionExpiredAlert = false
+    
+    // Track if this is the first appearance
+     @State private var hasAppeared = false
     
     // Add auth manager to handle logout
     @EnvironmentObject private var authManager: AuthManager
@@ -46,7 +52,7 @@ struct AnimatedDashboardHomeView: View {
                     authManager.logout()
                 }
             } message: {
-                Text("Your session has expired. Please log in again.")
+                Text("\(vm.error ?? "Your session has expired. Please log in again.")")
             }
             .onChange(of: vm.error) { oldValue, newValue in
                 // Check if error indicates session expiration
@@ -57,6 +63,15 @@ struct AnimatedDashboardHomeView: View {
                     showingSessionExpiredAlert = true
                 }
             }
+        }
+        .onAppear {
+            // Refresh when the view appears, but not on initial load
+            if hasAppeared {
+                Task {
+                    await refreshData()
+                }
+            }
+            hasAppeared = true
         }
         .task {
             if vm.dashboardData == nil {
@@ -242,10 +257,10 @@ struct AnimatedDashboardHomeView: View {
                 
                 Spacer()
                 
-                NavigationLink("View All") {
-                    LogListContainerView(vm: .constant(LogListViewModel()))
-                }
-                .font(.subheadline)
+//                NavigationLink("View All") {
+//                    LogListContainerView(vm: .constant(LogListViewModel()))
+//                }
+//                .font(.subheadline)
             }
             
             if recentExpenses.isEmpty {

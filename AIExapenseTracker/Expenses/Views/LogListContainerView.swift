@@ -46,9 +46,9 @@ struct LogListContainerView: View {
         }
         
         #if !os(macOS)
-        .navigationBarTitle("AI Expense Tracker", displayMode: .inline)
+        .navigationBarTitle("List Expense Tracker", displayMode: .inline)
         #else
-        .navigationTitle("AI Expense Tracker")
+        .navigationTitle("List Expense Tracker")
         #endif
     }
 }

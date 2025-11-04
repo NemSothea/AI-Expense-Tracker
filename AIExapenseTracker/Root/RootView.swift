@@ -37,13 +37,16 @@ struct RootView: View {
                 }
             }
             .onChange(of: authManager.isLoggedIn) { oldValue, newValue in
-                // Handle logout from AuthManager (e.g., session expiration)
                 if !newValue && oldValue {
                     // User was logged in but now is logged out
                     route = .login
-                    showingSessionExpiredAlert = true
+                    
+                    // Only show alert if it was a session expiration
+                    if authManager.isSessionExpired {
+                        showingSessionExpiredAlert = true
+                        authManager.isSessionExpired = false  // Reset for next time
+                    }
                 } else if newValue && !oldValue {
-                    // User logged in successfully
                     route = .content
                 }
             }
@@ -81,7 +84,7 @@ struct RootView: View {
         case .content:
             ContentView(onLogout: {
                 // Use AuthManager's logout method
-                authManager.logout()
+                authManager.logout(isSessionExpired: false)  // Explicitly set false
                 route = .login
             })
             .environmentObject(authManager) // Pass authManager to content hierarchy
