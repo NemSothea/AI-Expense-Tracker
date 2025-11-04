@@ -370,6 +370,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Backend API**: [Spring Boot Backend](https://github.com/NemSothea/AIExpenseTrackerBackEnd)
 - **Web Dashboard**: [React Frontend](https://github.com/NemSothea/AIExpenseTrackerFrontend)
 - **OpenAI Platform**: [API Keys](https://platform.openai.com/settings/organization/api-keys)
+- **Slide Document**: [Slide](https://docs.google.com/presentation/d/18H9n117rLrR5A4tOe5ecdOdIB8gpVb4a/edit?slide=id.p1#slide=id.p1)
 
 ---
 
