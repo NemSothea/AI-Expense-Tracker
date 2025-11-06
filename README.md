@@ -9,7 +9,7 @@
 
 **An intelligent expense management application powered by AI**
 
-[Features](#-features) • [Installation](#-installation) • [API Docs](#-api-documentation) • [Processflow](#-processflow) • [Demo](#-demo) • [Team](#-team)
+[Features](#features) • [Installation](#installation) • [API Docs](#api-documentation) • [Processflow](#processflow) • [Demo](#demo) • [Team](#team)
 
 </div>
 
@@ -23,7 +23,7 @@ AI Expense Tracker is a comprehensive financial management solution that leverag
 - **Voice Control**: Hands-free expense creation via voice commands
 - **Smart Analytics**: Interactive charts and spending insights
 
-## ✨ Features
+## ✨ Features <a id="features"></a>
 
 ### 🤖 Core Capabilities
 | Feature | Description | Status |
@@ -58,7 +58,7 @@ AI Expense Tracker is a comprehensive financial management solution that leverag
 └─────────────────┘    └──────────────────┘
 ```
 
-## 📥 Installation
+## 📥 Installation <a id="installation"></a>
 
 ### Prerequisites
 - **Java 21+**
@@ -135,7 +135,7 @@ open AI-Expense-Tracker/AIExapenseTracker.xcodeproj
    - Select target device/simulator
    - Press `Cmd + R` to build and run
 
-## 📚 API Documentation
+## 📚 API Documentation <a id="api-documentation"></a>
 
 ### Base URL
 ```
@@ -242,10 +242,17 @@ Access Swagger UI at: http://localhost:8080/swagger-ui/index.html
 - **Budget Alerts**: Set monthly budgets and receive notifications
 - **Multi-Currency**: Support for different currencies
 
-## 👥 Processflow
+## 📦 Processflow <a id="processflow"></a>
 
+![Process Flow](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Process%20Flow%20Mobile.png)
 
-## 👥 Team
+## 🔗 Demo <a id="demo"></a>
+
+### 📱 Centralized data access across multiple devices, iPhone, iPad, Mac, Web application 
+
+![Demo](https://raw.githubusercontent.com/NemSothea/AI-Expense-Tracker/Develop/Mobile_Demo.gif)
+
+## 👥 Team <a id="team"></a>
 
 | Role | Member | Responsibilities |
 |------|--------|------------------|
@@ -363,6 +370,7 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - **Backend API**: [Spring Boot Backend](https://github.com/NemSothea/AIExpenseTrackerBackEnd)
 - **Web Dashboard**: [React Frontend](https://github.com/NemSothea/AIExpenseTrackerFrontend)
 - **OpenAI Platform**: [API Keys](https://platform.openai.com/settings/organization/api-keys)
+- **Slide Document**: [Slide](https://docs.google.com/presentation/d/18H9n117rLrR5A4tOe5ecdOdIB8gpVb4a/edit?slide=id.p1#slide=id.p1)
 
 ---
 
@@ -378,4 +386,3 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 *Simplifying financial management through AI power*
 
 </div>
-
