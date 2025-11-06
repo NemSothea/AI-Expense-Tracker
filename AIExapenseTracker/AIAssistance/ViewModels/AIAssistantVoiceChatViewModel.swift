@@ -33,7 +33,7 @@ final class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantRespons
                             }
                             let request = ExpenseRequest(from: props.log, userId: user.id)
                             
-                            try? await ExpenseService.shared.createExpense(request)
+                            _ =  try await ExpenseService.shared.createExpense(request)
                             
                             await MainActor.run {
                                 let response = AIAssistantResponse(

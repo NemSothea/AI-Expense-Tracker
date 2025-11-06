@@ -69,7 +69,7 @@ struct LogFormView: View {
     
     private var formView: some View {
         Form {
-            TextField("Description", text: $vm.name)
+            TextField("Description(ex.Food, Gas, Drink)", text: $vm.name)
                 .disableAutocorrection(true)
             TextField("Amount", value: $vm.amount, formatter: vm.numberFormatter)
 #if !os(macOS)
