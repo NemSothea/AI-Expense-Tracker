@@ -378,6 +378,9 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 1. https://gist.github.com/parmentf/035de27d6ed1dce0b36a
 2. https://gitmoji.dev/
 
+# Credit :  [Xcoding with Alfian](https://www.youtube.com/@XCA)
+
+
 
 <div align="center">
 
