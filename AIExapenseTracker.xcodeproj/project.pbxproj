@@ -10,6 +10,8 @@
 		1639BE4C2EA679D400DAA623 /* Alamofire in Frameworks */ = {isa = PBXBuildFile; productRef = 1639BE4B2EA679D400DAA623 /* Alamofire */; };
 		16516CDB2EA7E6470030BE9B /* AIReceiptScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 16516CDA2EA7E6470030BE9B /* AIReceiptScanner */; };
 		166593AE2D07FDFB005F9856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 166593AB2D07FDFB005F9856 /* README.md */; };
+		169416D62EDF3688001D2BA5 /* AI Expense Tracker_Presentation_Final.pptx in Resources */ = {isa = PBXBuildFile; fileRef = 169416D52EDF3688001D2BA5 /* AI Expense Tracker_Presentation_Final.pptx */; };
+		169416D82EDF368F001D2BA5 /* AI Expense Tracker_Prompt.pptx in Resources */ = {isa = PBXBuildFile; fileRef = 169416D72EDF368F001D2BA5 /* AI Expense Tracker_Prompt.pptx */; };
 		169730362EAF758200A9A2DE /* SimpleKeychain in Frameworks */ = {isa = PBXBuildFile; productRef = 169730352EAF758200A9A2DE /* SimpleKeychain */; };
 		1699EAA52EB9E2BE0056603F /* Process Flow Mobile.png in Resources */ = {isa = PBXBuildFile; fileRef = 1699EAA42EB9E2BE0056603F /* Process Flow Mobile.png */; };
 		1699EAA72EBA067B0056603F /* Mobile_Demo.gif in Resources */ = {isa = PBXBuildFile; fileRef = 1699EAA62EBA067B0056603F /* Mobile_Demo.gif */; };
@@ -42,6 +44,8 @@
 /* Begin PBXFileReference section */
 		1665937C2D07FC91005F9856 /* AIExapenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIExapenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		166593AB2D07FDFB005F9856 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		169416D52EDF3688001D2BA5 /* AI Expense Tracker_Presentation_Final.pptx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AI Expense Tracker_Presentation_Final.pptx"; sourceTree = "<group>"; };
+		169416D72EDF368F001D2BA5 /* AI Expense Tracker_Prompt.pptx */ = {isa = PBXFileReference; lastKnownFileType = file; path = "AI Expense Tracker_Prompt.pptx"; sourceTree = "<group>"; };
 		1699EAA42EB9E2BE0056603F /* Process Flow Mobile.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Process Flow Mobile.png"; sourceTree = "<group>"; };
 		1699EAA62EBA067B0056603F /* Mobile_Demo.gif */ = {isa = PBXFileReference; lastKnownFileType = image.gif; path = Mobile_Demo.gif; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -97,6 +101,8 @@
 			children = (
 				1699EAA62EBA067B0056603F /* Mobile_Demo.gif */,
 				1699EAA42EB9E2BE0056603F /* Process Flow Mobile.png */,
+				169416D52EDF3688001D2BA5 /* AI Expense Tracker_Presentation_Final.pptx */,
+				169416D72EDF368F001D2BA5 /* AI Expense Tracker_Prompt.pptx */,
 				166593AB2D07FDFB005F9856 /* README.md */,
 				1665937E2D07FC91005F9856 /* AIExapenseTracker */,
 				1665938F2D07FC93005F9856 /* AIExapenseTrackerTests */,
@@ -199,6 +205,8 @@
 			files = (
 				1699EAA72EBA067B0056603F /* Mobile_Demo.gif in Resources */,
 				1699EAA52EB9E2BE0056603F /* Process Flow Mobile.png in Resources */,
+				169416D62EDF3688001D2BA5 /* AI Expense Tracker_Presentation_Final.pptx in Resources */,
+				169416D82EDF368F001D2BA5 /* AI Expense Tracker_Prompt.pptx in Resources */,
 				166593AE2D07FDFB005F9856 /* README.md in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
