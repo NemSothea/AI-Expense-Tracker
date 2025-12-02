@@ -53,31 +53,61 @@ struct FilterCategoriesView: View {
 
 struct FilterButtonView: View {
     
-    var category    : Category
-    var isSelected  : Bool
-    var onTap       : (Category) -> ()
+    var category: Category
+    var isSelected: Bool
+    var onTap: (Category) -> ()
+    
+    @Environment(\.colorScheme) var colorScheme
+    
+    var backgroundColor: Color {
+        if isSelected {
+            return category.color
+        } else {
+            return colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5)
+        }
+    }
+    
+    var strokeColor: Color {
+        if isSelected {
+            return category.color
+        } else {
+            return colorScheme == .dark ? Color.gray.opacity(0.4) : Color.gray.opacity(0.5)
+        }
+    }
+    
+    var textColor: Color {
+        if isSelected {
+            // Ensure text is readable on the category color
+            return category.color.isLight ? .black : .white
+        } else {
+            return .primary
+        }
+    }
     
     var body: some View {
-        HStack(spacing:4) {
+        HStack(spacing: 4) {
             Text(category.rawValue.capitalized)
                 .fixedSize(horizontal: true, vertical: true)
-                .padding(.horizontal,16)
-                .padding(.vertical,4)
+                .padding(.horizontal, 16)
+                .padding(.vertical, 4)
                 .background {
                     RoundedRectangle(cornerRadius: 16)
-                        .stroke( isSelected ? category.color : Color.gray,lineWidth:1)
-                        .overlay {
-                            RoundedRectangle(cornerRadius: 16).foregroundStyle(isSelected ? category.color : Color.clear)
-                        }
+                        .stroke(strokeColor, lineWidth: 1)
+                        .background(
+                            RoundedRectangle(cornerRadius: 16)
+                                .fill(backgroundColor)
+                        )
                 }
                 .frame(height: 44)
                 .onTapGesture {
                     self.onTap(self.category)
                 }
-                .foregroundStyle(isSelected ? .white : Color.black)
+                .foregroundStyle(textColor)
         }
     }
 }
+
+
 
 
 

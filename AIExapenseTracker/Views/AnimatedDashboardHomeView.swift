@@ -402,4 +402,12 @@ extension Color {
             blue: Double.random(in: 0...1)
         )
     }
+  
+    var isLight: Bool {
+        // This is a simplified check - you might want to implement proper luminance calculation
+        guard let components = UIColor(self).cgColor.components else { return false }
+        let brightness = ((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000
+        return brightness > 0.5
+    }
+    
 }
