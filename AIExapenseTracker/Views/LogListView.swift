@@ -13,7 +13,7 @@ struct LogListView: View {
     
     @FirestoreQuery(collectionPath: "logs",predicates: [.order(by: SortType.date.rawValue, descending: true)])
     
-    private var logs : [ExspenseLog]
+    private var logs : [ExpenseLog]
     
     var body: some View {
     

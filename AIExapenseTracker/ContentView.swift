@@ -30,24 +30,33 @@ struct ContentView: View {
     var tapView : some View {
         TabView {
             NavigationStack {
+                AnimatedDashboardHomeView()
+            }
+            .tabItem {
+                    Label("Home", systemImage: "bolt.house.fill")
+            }.tag(0)
+            
+            NavigationStack {
                 LogListContainerView(vm: $vm)
             }
             .tabItem {
                 Label("Exspense", systemImage: "tray")
-            }.tag(0)
+            }.tag(1)
             
             NavigationStack {
-                AIAssitantView()
+                AIAssistantView()
             }
             .tabItem {
                 Label("AI Assistant", systemImage: "waveform")
-            }.tag(1)
+            }.tag(2)
+            
             NavigationStack {
-                LoginView()
+                ExpenseReceiptScannerView()
             }
             .tabItem {
-                    Label("Profile", systemImage: "person.circle")
-            }.tag(2)
+                Label("Receipt Scanner", systemImage: "eye")
+            }.tag(3)
+           
         }
     }
     var splitView : some View {
@@ -56,13 +65,11 @@ struct ContentView: View {
                 NavigationLink(destination: LogListView(vm: $vm)) {
                     Label("Exspense", systemImage: "tray")
                 }
-                NavigationLink(destination: AIAssitantView()) {
+                NavigationLink(destination: AIAssistantView()) {
                     Label("AI Assistant", systemImage: "waveform")
                 }
                 
-                NavigationLink(destination:  LoginView()) {
-                    Label("Account", systemImage: "person.circle")
-                }
+               
             }
             
             
@@ -73,6 +80,6 @@ struct ContentView: View {
     }
 }
 
-#Preview {
-    ContentView()
-}
+//#Preview {
+//    ContentView()
+//}

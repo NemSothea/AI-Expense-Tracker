@@ -10,8 +10,8 @@ import Observation
 
 @Observable
 class FormViewModel  {
-    var logToEdit: ExspenseLog?
-    let db = DataBaseManager.shared
+    var logToEdit: ExpenseLog?
+    let db = DatabaseManager.shared
     
     var name = ""
     var amount : Double = 0
@@ -31,7 +31,7 @@ class FormViewModel  {
     }()
     
     
-    init(logToEdit: ExspenseLog? = nil) {
+    init(logToEdit: ExpenseLog? = nil) {
         self.logToEdit = logToEdit
         if let logToEdit {
             self.name = logToEdit.name
@@ -42,11 +42,11 @@ class FormViewModel  {
         }
     }
     func save() {
-        var log : ExspenseLog
+        var log : ExpenseLog
         if let logToEdit {
             log = logToEdit
         } else {
-            log = ExspenseLog(id: UUID().uuidString, name: "Unknown", category: "Unknown", amount: 0, date: .now)
+            log = ExpenseLog(id: UUID().uuidString, name: "Unknown", category: "Unknown", amount: 0, date: .now)
         }
         
         log.name = self.name.trimmingCharacters(in: .whitespacesAndNewlines)
@@ -62,7 +62,7 @@ class FormViewModel  {
 
         
     }
-    func delete(log: ExspenseLog) {
+    func delete(log: ExpenseLog) {
         db.delete(log: log)
     }
     

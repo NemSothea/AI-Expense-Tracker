@@ -7,9 +7,10 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		160D26492EDEECBA00D26D8B /* ChatGPTUI in Frameworks */ = {isa = PBXBuildFile; productRef = 160D26482EDEECBA00D26D8B /* ChatGPTUI */; };
 		166593AE2D07FDFB005F9856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 166593AB2D07FDFB005F9856 /* README.md */; };
 		166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 166593B12D0801B7005F9856 /* FirebaseFirestore */; };
-		16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */ = {isa = PBXBuildFile; productRef = 16D896862D1D21D900561032 /* ChatGPTUI */; };
+		16EB93C22EDED60A00886E3D /* AIReceiptScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 16EB93C12EDED60A00886E3D /* AIReceiptScanner */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -76,7 +77,8 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				16D896872D1D21D900561032 /* ChatGPTUI in Frameworks */,
+				16EB93C22EDED60A00886E3D /* AIReceiptScanner in Frameworks */,
+				160D26492EDEECBA00D26D8B /* ChatGPTUI in Frameworks */,
 				166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -134,7 +136,8 @@
 			name = AIExapenseTracker;
 			packageProductDependencies = (
 				166593B12D0801B7005F9856 /* FirebaseFirestore */,
-				16D896862D1D21D900561032 /* ChatGPTUI */,
+				16EB93C12EDED60A00886E3D /* AIReceiptScanner */,
+				160D26482EDEECBA00D26D8B /* ChatGPTUI */,
 			);
 			productName = AIExapenseTracker;
 			productReference = 1665937C2D07FC91005F9856 /* AIExapenseTracker.app */;
@@ -166,7 +169,8 @@
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
 				166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
-				16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */,
+				16EB93C02EDED60A00886E3D /* XCRemoteSwiftPackageReference "AIReceiptScanner" */,
+				160D26472EDEECBA00D26D8B /* XCRemoteSwiftPackageReference "ChatGPTUI" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 1665937D2D07FC91005F9856 /* Products */;
@@ -327,24 +331,29 @@
 				CODE_SIGN_ENTITLEMENTS = AIExapenseTracker/AIExapenseTracker.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_ASSET_PATHS = "\"AIExapenseTracker/Preview Content\"";
-				DEVELOPMENT_TEAM = PBJ22NG3WU;
+				DEVELOPMENT_TEAM = 62EMNW6G6D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIExapenseTracker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "AI Expense";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take receipt picture";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Talk with AI Assistant";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Get receipt picture";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sothea.ExapenseAI;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kh.kosign.expenseaidemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = NO;
@@ -367,24 +376,29 @@
 				CODE_SIGN_ENTITLEMENTS = AIExapenseTracker/AIExapenseTracker.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_ASSET_PATHS = "\"AIExapenseTracker/Preview Content\"";
-				DEVELOPMENT_TEAM = PBJ22NG3WU;
+				DEVELOPMENT_TEAM = 62EMNW6G6D;
+				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIExapenseTracker/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "AI Expense";
+				INFOPLIST_KEY_NSCameraUsageDescription = "Take receipt picture";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Talk with AI Assistant";
+				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Get receipt picture";
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 18.1;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = com.sothea.ExapenseAI;
+				MARKETING_VERSION = 1.0.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kh.kosign.expenseaidemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				REGISTER_APP_GROUPS = NO;
@@ -422,6 +436,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		160D26472EDEECBA00D26D8B /* XCRemoteSwiftPackageReference "ChatGPTUI" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/NemSothea/ChatGPTUI.git";
+			requirement = {
+				branch = main;
+				kind = branch;
+			};
+		};
 		166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -430,26 +452,31 @@
 				minimumVersion = 11.6.0;
 			};
 		};
-		16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */ = {
+		16EB93C02EDED60A00886E3D /* XCRemoteSwiftPackageReference "AIReceiptScanner" */ = {
 			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/alfianlosari/ChatGPTUI";
+			repositoryURL = "https://github.com/alfianlosari/AIReceiptScanner.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.3.1;
+				minimumVersion = 1.0.4;
 			};
 		};
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		160D26482EDEECBA00D26D8B /* ChatGPTUI */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 160D26472EDEECBA00D26D8B /* XCRemoteSwiftPackageReference "ChatGPTUI" */;
+			productName = ChatGPTUI;
+		};
 		166593B12D0801B7005F9856 /* FirebaseFirestore */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 166593AF2D080172005F9856 /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;
 			productName = FirebaseFirestore;
 		};
-		16D896862D1D21D900561032 /* ChatGPTUI */ = {
+		16EB93C12EDED60A00886E3D /* AIReceiptScanner */ = {
 			isa = XCSwiftPackageProductDependency;
-			package = 16D896852D1D201E00561032 /* XCRemoteSwiftPackageReference "ChatGPTUI" */;
-			productName = ChatGPTUI;
+			package = 16EB93C02EDED60A00886E3D /* XCRemoteSwiftPackageReference "AIReceiptScanner" */;
+			productName = AIReceiptScanner;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};

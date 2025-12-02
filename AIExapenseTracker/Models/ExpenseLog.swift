@@ -6,16 +6,16 @@
 //
 
 import Foundation
+import FirebaseFirestore
 
-
-struct ExspenseLog : Codable, Identifiable, Equatable {
+struct ExpenseLog : Codable, Identifiable, Equatable {
     
-    var id  : String
-    var name : String
-    var category : String
-    var amount : Double
-    var currency : String
-    var date : Date
+    var id          : String
+    var name        : String
+    var category    : String
+    var amount      : Double
+    var currency    : String
+    var date        : Date
     
     
     var categoryEnum : Category {
@@ -33,7 +33,7 @@ struct ExspenseLog : Codable, Identifiable, Equatable {
 
 }
 
-extension ExspenseLog {
+extension ExpenseLog {
     
     var dateText : String {
         Utils.dateFormatter.string(from: date)

@@ -19,6 +19,8 @@ struct Utils {
         let formatter = NumberFormatter()
         formatter.isLenient = true
         formatter.numberStyle = .currency
+        formatter.minimumFractionDigits = 0
+        formatter.maximumFractionDigits = 0
         return formatter
     }()
 }

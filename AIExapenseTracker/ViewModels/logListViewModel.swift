@@ -12,7 +12,7 @@ import FirebaseFirestore
 @Observable
 class LogListViewModel {
     
-    let db = DataBaseManager.shared
+    let db = DatabaseManager.shared
     
     var sortType = SortType.date
     
@@ -22,7 +22,7 @@ class LogListViewModel {
     
     var isLogFormPresented: Bool = false
     
-    var logToEdit: ExspenseLog?
+    var logToEdit: ExpenseLog?
     
     
     var predicates : [QueryPredicate] {
