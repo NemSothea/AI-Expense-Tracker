@@ -47,7 +47,7 @@ struct LogItemView: View {
             Text(log.name)
                 .frame(minWidth: 0,maxWidth: .infinity,alignment: .leading)
             Spacer()
-            Text(log.amountText)
+            Text(log.amountListText)
                 .frame(minWidth: 0,maxWidth: .infinity,alignment: .leading)
             Spacer()
             Text(log.dateText)

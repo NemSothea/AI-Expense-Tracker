@@ -403,7 +403,11 @@ extension Color {
   
     var isLight: Bool {
         // This is a simplified check - you might want to implement proper luminance calculation
-        guard let components = UIColor(self).cgColor.components else { return false }
+        #if os(iOS)
+       guard let components = UIColor(self).cgColor.components else { return false }
+       #elseif os(macOS)
+       guard let components = NSColor(self).cgColor.components else { return false }
+       #endif
         let brightness = ((components[0] * 299) + (components[1] * 587) + (components[2] * 114)) / 1000
         return brightness > 0.5
     }

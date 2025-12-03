@@ -49,11 +49,11 @@ struct LogListContainerView: View {
     
 }
 
-#Preview {
-    @Previewable @State var vm = LogListViewModel()
-    
-    return NavigationStack {
-        LogListContainerView(vm: $vm)
-    }
- 
-}
+//#Preview {
+//    @Previewable @State var vm = LogListViewModel()
+//    
+//    return NavigationStack {
+//        LogListContainerView(vm: $vm)
+//    }
+// 
+//}

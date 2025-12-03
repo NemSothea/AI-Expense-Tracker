@@ -12,6 +12,8 @@ struct ContentView: View {
     @State var vm = LogListViewModel()
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
+    // Add selection state for macOS
+    @State private var selectedTab: Int? = 0 // Default to Home
     
     var body: some View {
 #if os(macOS)
@@ -22,7 +24,6 @@ struct ContentView: View {
         switch horizontalSizeClass {
         case .compact: tapView
         default : splitView
-            
         }
 #endif
     }
@@ -33,14 +34,14 @@ struct ContentView: View {
                 AnimatedDashboardHomeView()
             }
             .tabItem {
-                    Label("Home", systemImage: "bolt.house.fill")
+                Label("Home", systemImage: "bolt.house.fill")
             }.tag(0)
             
             NavigationStack {
                 LogListContainerView(vm: $vm)
             }
             .tabItem {
-                Label("Exspense", systemImage: "tray")
+                Label("Expense", systemImage: "tray")
             }.tag(1)
             
             NavigationStack {
@@ -56,27 +57,51 @@ struct ContentView: View {
             .tabItem {
                 Label("Receipt Scanner", systemImage: "eye")
             }.tag(3)
-           
         }
     }
+    
     var splitView : some View {
         NavigationSplitView {
-            List {
-                NavigationLink(destination: LogListView(vm: $vm)) {
-                    Label("Exspense", systemImage: "tray")
+            List(selection: $selectedTab) {
+                
+                NavigationLink(value: 0) {
+                    Label("Home", systemImage: "bolt.house.fill")
                 }
-                NavigationLink(destination: AIAssistantView()) {
+                
+                NavigationLink(value: 1) {
+                    Label("Expense", systemImage: "tray")
+                }
+                
+                NavigationLink(value: 2) {
                     Label("AI Assistant", systemImage: "waveform")
                 }
                 
-               
+                NavigationLink(value: 3) {
+                    Label("Receipt Scanner", systemImage: "eye")
+                }
+            }
+            .navigationTitle("AI Expense Tracker")
+            .onAppear {
+                // Ensure Home is selected by default on macOS
+                if selectedTab == nil {
+                    selectedTab = 0
+                }
             }
             
-            
-        } detail : {
-            LogListContainerView(vm: $vm)
+        } detail: {
+            switch selectedTab {
+            case 0:
+                AnimatedDashboardHomeView()
+            case 1:
+                LogListContainerView(vm: $vm)
+            case 2:
+                AIAssistantView()
+            case 3:
+                ExpenseReceiptScannerView()
+            default:
+                AnimatedDashboardHomeView()
+            }
         }
-        .navigationTitle("AI Expenses Tracker")
     }
 }
 

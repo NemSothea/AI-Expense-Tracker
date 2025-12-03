@@ -103,7 +103,13 @@ struct AIAssistantView: View {
             }
         }
         .padding(.vertical, 12)
+        
+#if os(iOS)
         .background(Color(.systemGray6).opacity(0.4))
+     #elseif os(macOS)
+     // macOS system colors
+        .background(Color(.windowBackgroundColor).opacity(0.4))
+#endif
     }
     
     func sendSuggestion(_ suggestion: String) {

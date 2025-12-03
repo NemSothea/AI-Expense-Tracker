@@ -63,7 +63,12 @@ struct FilterButtonView: View {
         if isSelected {
             return category.color
         } else {
-            return colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5)
+#if os(iOS)
+     return colorScheme == .dark ? Color(.systemGray6) : Color(.systemGray5)
+     #elseif os(macOS)
+     // macOS system colors
+     return colorScheme == .dark ? Color(.windowBackgroundColor) : Color(.controlBackgroundColor)
+#endif
         }
     }
     
