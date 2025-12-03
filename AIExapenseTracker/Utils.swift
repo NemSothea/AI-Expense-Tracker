@@ -11,7 +11,7 @@ struct Utils {
     
     static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
-        formatter.dateFormat = "yyyy/MM"
+        formatter.dateFormat = "yyyy/MM/dd"
         return formatter
     }()
     
@@ -21,6 +21,14 @@ struct Utils {
         formatter.numberStyle = .currency
         formatter.minimumFractionDigits = 0
         formatter.maximumFractionDigits = 0
+        return formatter
+    }()
+    
+    static let numberListFormatter: NumberFormatter = {
+        let formatter = NumberFormatter()
+        formatter.isLenient = true
+        formatter.numberStyle = .currency
+    
         return formatter
     }()
 }

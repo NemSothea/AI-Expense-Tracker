@@ -9,7 +9,7 @@ import Foundation
 import FirebaseFirestore
 import ChatGPTSwift
 
-class FunctionsManager {
+class FunctionsManager : @unchecked Sendable {
     
     let api: ChatGPTAPI
     let db = DatabaseManager.shared
@@ -107,9 +107,9 @@ class FunctionsManager {
                     let chartOptions = categorySumDict.map { Option(category: $0.key, amount: $0.value) }
                     return .init(text: "Sure, here is the visualization of your expenses for each category", type: .visualizeExpenses(visualizeExpenseArgs.chartTypeEnum, chartOptions))
                         
-                default:
+                @unknown default:
                     var text = "Function Name: \(toolCall.function.name)"
-                    text += "\nArgs: \(toolCall.function.arguments)"
+                    text += "\nArgs: Sorry, I don't support this function yet \(toolCall.function.arguments)"
                     return .init(text: text, type: .contentText)
                 }
             } else if let message = message.content {

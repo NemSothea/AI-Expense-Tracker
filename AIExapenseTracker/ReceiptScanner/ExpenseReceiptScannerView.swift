@@ -93,7 +93,7 @@ struct ExpenseReceiptScannerView: View {
                 }
             }
         }
-        .onChange(of: scanStatus) { newStatus in
+        .onChange(of: scanStatus) { _, newStatus in
             handleScanStatusChange(newStatus)
         }
     }

@@ -267,9 +267,7 @@ struct AnimatedDashboardHomeView: View {
                     .font(.headline)
                 
                 Spacer()
-                
-                // You can implement view all navigation here
-                // NavigationLink("View All") { ... }
+            
             }
             
             if vm.recentExpenses.isEmpty {

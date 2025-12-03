@@ -19,11 +19,12 @@ struct AIExapenseTrackerApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
     
 #endif
+
     
     var body: some Scene {
         WindowGroup {
             
-            ContentView()
+            LaunchScreenView()
             #if os(macOS)
                 .frame(minWidth:729, minHeight: 480)
             #endif

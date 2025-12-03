@@ -42,4 +42,10 @@ extension ExpenseLog {
         Utils.numberFormatter.currencySymbol = currency
         return Utils.numberFormatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
     }
+    
+    var amountListText : String {
+        Utils.numberListFormatter.currencySymbol = currency
+        Utils.numberListFormatter.currencyCode = currency
+        return Utils.numberListFormatter.string(from: NSNumber(value: amount)) ?? "\(amount)"
+    }
 }

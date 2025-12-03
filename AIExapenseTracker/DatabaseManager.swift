@@ -8,13 +8,13 @@
 import Foundation
 import FirebaseFirestore
 
-class DatabaseManager {
+final class DatabaseManager : @unchecked Sendable {
     
     static let shared = DatabaseManager()
     
     private init() {}
     
-    private (set) lazy var logsCollection : CollectionReference = {
+    private(set) lazy var logsCollection : CollectionReference = {
         Firestore.firestore().collection("logs")
     }()
     

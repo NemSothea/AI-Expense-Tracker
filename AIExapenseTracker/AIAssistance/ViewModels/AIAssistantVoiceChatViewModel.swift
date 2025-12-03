@@ -12,7 +12,7 @@ import ChatGPTSwift
 import FirebaseFirestore
 
 @Observable
-class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantResponseView> {
+final class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantResponseView>, @unchecked Sendable {
     
     let functionsManager: FunctionsManager
     let db = DatabaseManager.shared

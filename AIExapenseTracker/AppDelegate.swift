@@ -44,7 +44,7 @@ fileprivate func setupFirebase() {
     if isPreviewRuntime() {
         let settings = Firestore.firestore().settings
         settings.host = "localhost:8080"
-        settings.isPersistenceEnabled = false
+        settings.cacheSettings = MemoryCacheSettings()
         settings.isSSLEnabled = false
         Firestore.firestore().settings = settings
         

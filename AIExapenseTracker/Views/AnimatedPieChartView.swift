@@ -25,8 +25,8 @@ struct AnimatedPieChartView: View {
             .foregroundStyle(by: .value("Category", category.name))
             .annotation(position: .overlay) {
                 if animateChart && category.pctOfTotal > 8 { // Only show percentage if slice is big enough
-                    Text("\(Int(category.pctOfTotal))%")
-                        .font(.caption2)
+                    Text("\(String(format: "%.0f", category.pctOfTotal))%")
+                        .font(.caption)
                         .fontWeight(.bold)
                         .foregroundColor(.white)
                         .scaleEffect(animateChart ? 1 : 0)
