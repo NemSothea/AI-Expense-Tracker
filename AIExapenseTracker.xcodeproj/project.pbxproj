@@ -10,8 +10,21 @@
 		160D26492EDEECBA00D26D8B /* ChatGPTUI in Frameworks */ = {isa = PBXBuildFile; productRef = 160D26482EDEECBA00D26D8B /* ChatGPTUI */; };
 		166593AE2D07FDFB005F9856 /* README.md in Resources */ = {isa = PBXBuildFile; fileRef = 166593AB2D07FDFB005F9856 /* README.md */; };
 		166593B22D0801B7005F9856 /* FirebaseFirestore in Frameworks */ = {isa = PBXBuildFile; productRef = 166593B12D0801B7005F9856 /* FirebaseFirestore */; };
+		168BD26C2EF133FD007BD0DA /* WidgetKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 168BD26B2EF133FD007BD0DA /* WidgetKit.framework */; };
+		168BD26E2EF133FD007BD0DA /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 168BD26D2EF133FD007BD0DA /* SwiftUI.framework */; };
+		168BD27F2EF133FF007BD0DA /* aiexpensewidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 168BD26A2EF133FD007BD0DA /* aiexpensewidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		16EB93C22EDED60A00886E3D /* AIReceiptScanner in Frameworks */ = {isa = PBXBuildFile; productRef = 16EB93C12EDED60A00886E3D /* AIReceiptScanner */; };
 /* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		168BD27D2EF133FF007BD0DA /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 166593742D07FC91005F9856 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 168BD2692EF133FD007BD0DA;
+			remoteInfo = aiexpensewidgetExtension;
+		};
+/* End PBXContainerItemProxy section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		166A37312D127AE3001320D8 /* Embed ExtensionKit Extensions */ = {
@@ -30,6 +43,7 @@
 			dstPath = "";
 			dstSubfolderSpec = 13;
 			files = (
+				168BD27F2EF133FF007BD0DA /* aiexpensewidgetExtension.appex in Embed Foundation Extensions */,
 			);
 			name = "Embed Foundation Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -39,6 +53,10 @@
 /* Begin PBXFileReference section */
 		1665937C2D07FC91005F9856 /* AIExapenseTracker.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = AIExapenseTracker.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		166593AB2D07FDFB005F9856 /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		168BD26A2EF133FD007BD0DA /* aiexpensewidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = aiexpensewidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		168BD26B2EF133FD007BD0DA /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
+		168BD26D2EF133FD007BD0DA /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		168BD66D2EF13D53007BD0DA /* aiexpensewidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = aiexpensewidgetExtension.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -46,6 +64,20 @@
 			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
 			membershipExceptions = (
 				Info.plist,
+			);
+			target = 1665937B2D07FC91005F9856 /* AIExapenseTracker */;
+		};
+		168BD2832EF133FF007BD0DA /* Exceptions for "aiexpensewidget" folder in "aiexpensewidgetExtension" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 168BD2692EF133FD007BD0DA /* aiexpensewidgetExtension */;
+		};
+		168BD6712EF13FE7007BD0DA /* Exceptions for "aiexpensewidget" folder in "AIExapenseTracker" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				LastExpenseWidgetData.swift,
 			);
 			target = 1665937B2D07FC91005F9856 /* AIExapenseTracker */;
 		};
@@ -70,6 +102,15 @@
 			path = AIExapenseTrackerUITests;
 			sourceTree = "<group>";
 		};
+		168BD26F2EF133FD007BD0DA /* aiexpensewidget */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				168BD6712EF13FE7007BD0DA /* Exceptions for "aiexpensewidget" folder in "AIExapenseTracker" target */,
+				168BD2832EF133FF007BD0DA /* Exceptions for "aiexpensewidget" folder in "aiexpensewidgetExtension" target */,
+			);
+			path = aiexpensewidget;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -83,17 +124,28 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		168BD2672EF133FD007BD0DA /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				168BD26E2EF133FD007BD0DA /* SwiftUI.framework in Frameworks */,
+				168BD26C2EF133FD007BD0DA /* WidgetKit.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
 		166593732D07FC91005F9856 = {
 			isa = PBXGroup;
 			children = (
+				168BD66D2EF13D53007BD0DA /* aiexpensewidgetExtension.entitlements */,
 				16A70FC52EE0202A00DB929A /* Processflow */,
 				166593AB2D07FDFB005F9856 /* README.md */,
 				1665937E2D07FC91005F9856 /* AIExapenseTracker */,
 				1665938F2D07FC93005F9856 /* AIExapenseTrackerTests */,
 				166593992D07FC93005F9856 /* AIExapenseTrackerUITests */,
+				168BD26F2EF133FD007BD0DA /* aiexpensewidget */,
 				166593B02D0801B7005F9856 /* Frameworks */,
 				1665937D2D07FC91005F9856 /* Products */,
 			);
@@ -103,6 +155,7 @@
 			isa = PBXGroup;
 			children = (
 				1665937C2D07FC91005F9856 /* AIExapenseTracker.app */,
+				168BD26A2EF133FD007BD0DA /* aiexpensewidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -110,6 +163,8 @@
 		166593B02D0801B7005F9856 /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				168BD26B2EF133FD007BD0DA /* WidgetKit.framework */,
+				168BD26D2EF133FD007BD0DA /* SwiftUI.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -137,6 +192,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				168BD27E2EF133FF007BD0DA /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
 				1665937E2D07FC91005F9856 /* AIExapenseTracker */,
@@ -151,6 +207,28 @@
 			productReference = 1665937C2D07FC91005F9856 /* AIExapenseTracker.app */;
 			productType = "com.apple.product-type.application";
 		};
+		168BD2692EF133FD007BD0DA /* aiexpensewidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 168BD2802EF133FF007BD0DA /* Build configuration list for PBXNativeTarget "aiexpensewidgetExtension" */;
+			buildPhases = (
+				168BD2662EF133FD007BD0DA /* Sources */,
+				168BD2672EF133FD007BD0DA /* Frameworks */,
+				168BD2682EF133FD007BD0DA /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				168BD26F2EF133FD007BD0DA /* aiexpensewidget */,
+			);
+			name = aiexpensewidgetExtension;
+			packageProductDependencies = (
+			);
+			productName = aiexpensewidgetExtension;
+			productReference = 168BD26A2EF133FD007BD0DA /* aiexpensewidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -158,11 +236,14 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 1610;
+				LastSwiftUpdateCheck = 1640;
 				LastUpgradeCheck = 1640;
 				TargetAttributes = {
 					1665937B2D07FC91005F9856 = {
 						CreatedOnToolsVersion = 16.1;
+					};
+					168BD2692EF133FD007BD0DA = {
+						CreatedOnToolsVersion = 16.4;
 					};
 				};
 			};
@@ -186,6 +267,7 @@
 			projectRoot = "";
 			targets = (
 				1665937B2D07FC91005F9856 /* AIExapenseTracker */,
+				168BD2692EF133FD007BD0DA /* aiexpensewidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -199,6 +281,13 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		168BD2682EF133FD007BD0DA /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
@@ -209,7 +298,22 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
+		168BD2662EF133FD007BD0DA /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		168BD27E2EF133FF007BD0DA /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 168BD2692EF133FD007BD0DA /* aiexpensewidgetExtension */;
+			targetProxy = 168BD27D2EF133FF007BD0DA /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin XCBuildConfiguration section */
 		1665939E2D07FC93005F9856 /* Debug */ = {
@@ -340,20 +444,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = AIExapenseTracker/AIExapenseTracker.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_ASSET_PATHS = "\"AIExapenseTracker/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 62EMNW6G6D;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 62EMNW6G6D;
-				"DEVELOPMENT_TEAM[sdk=xros*]" = 62EMNW6G6D;
+				DEVELOPMENT_TEAM = 62EMNW6G6D;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIExapenseTracker/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Expense";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take receipt picture";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Talk with AI Assistant";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Get receipt picture";
@@ -371,9 +471,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.kh.kosign.expenseaidemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = expenseaidemo;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=xros*]" = expenseaidemo;
-				REGISTER_APP_GROUPS = NO;
+				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -392,20 +490,16 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = AIExapenseTracker/AIExapenseTracker.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Distribution";
-				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
-				CODE_SIGN_STYLE = Manual;
+				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1.0.0;
 				DEVELOPMENT_ASSET_PATHS = "\"AIExapenseTracker/Preview Content\"";
-				DEVELOPMENT_TEAM = "";
-				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 62EMNW6G6D;
-				"DEVELOPMENT_TEAM[sdk=macosx*]" = 62EMNW6G6D;
-				"DEVELOPMENT_TEAM[sdk=xros*]" = 62EMNW6G6D;
+				DEVELOPMENT_TEAM = 62EMNW6G6D;
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = AIExapenseTracker/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "AI Expense";
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.finance";
 				INFOPLIST_KEY_NSCameraUsageDescription = "Take receipt picture";
 				INFOPLIST_KEY_NSMicrophoneUsageDescription = "Talk with AI Assistant";
 				INFOPLIST_KEY_NSPhotoLibraryAddUsageDescription = "Get receipt picture";
@@ -423,9 +517,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = com.kh.kosign.expenseaidemo;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = expenseaidemo;
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=xros*]" = expenseaidemo;
-				REGISTER_APP_GROUPS = NO;
+				REGISTER_APP_GROUPS = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx xros xrsimulator";
 				SUPPORTS_MACCATALYST = NO;
 				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
@@ -433,6 +525,66 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2,7";
+			};
+			name = Release;
+		};
+		168BD2812EF133FF007BD0DA /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = aiexpensewidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62EMNW6G6D;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = aiexpensewidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = aiexpensewidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kh.kosign.expenseaidemo.aiexpensewidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		168BD2822EF133FF007BD0DA /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				ASSETCATALOG_COMPILER_WIDGET_BACKGROUND_COLOR_NAME = WidgetBackground;
+				CODE_SIGN_ENTITLEMENTS = aiexpensewidgetExtension.entitlements;
+				CODE_SIGN_IDENTITY = "Apple Development";
+				CODE_SIGN_STYLE = Automatic;
+				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = 62EMNW6G6D;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = aiexpensewidget/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = aiexpensewidget;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = com.kh.kosign.expenseaidemo.aiexpensewidget;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
 			};
 			name = Release;
 		};
@@ -453,6 +605,15 @@
 			buildConfigurations = (
 				166593A12D07FC93005F9856 /* Debug */,
 				166593A22D07FC93005F9856 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		168BD2802EF133FF007BD0DA /* Build configuration list for PBXNativeTarget "aiexpensewidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				168BD2812EF133FF007BD0DA /* Debug */,
+				168BD2822EF133FF007BD0DA /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

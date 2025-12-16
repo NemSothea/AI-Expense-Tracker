@@ -7,6 +7,7 @@
 
 import FirebaseFirestore
 import SwiftUI
+import WidgetKit
 
 struct LogListView: View {
     
@@ -54,6 +55,8 @@ struct LogListView: View {
             // Check if we have more data to load
             vm.hasMoreData = newLogs.count >= vm.pageSize * vm.currentPage
             vm.isLoading = false
+            
+            pushLastExpenseToWidget(newLogs)
         }
         .onAppear {
             // For manual pagination
@@ -65,43 +68,77 @@ struct LogListView: View {
     var autoLoadingListView: some View {
 #if os(iOS)
         List {
-            ForEach(firestoreLogs) { log in
-                LogItemView(log: log)
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        vm.logToEdit = log
-                    }
-                    .padding(.vertical, 4)
-                    .onAppear {
-                        // Load more when reaching the last item
-                        if log == firestoreLogs.last && vm.hasMoreData && !vm.isLoading {
-                            vm.loadNextPage()
+            
+                ForEach(groupedByMonth, id: \.monthStart) { group in
+                    Section(header: Text(monthTitle(group.monthStart))) {
+                        if group.logs.isEmpty {
+                            ContentUnavailableView("No expenses this month", systemImage: "tray")
+                        } else {
+                            ForEach(group.logs) { log in
+                                LogItemView(log: log)
+                                    .contentShape(Rectangle())
+                                    .contextMenu {
+                                        Button {
+                                            UIPasteboard.general.string = "\(log.name) - \(log.amount)$ - \(log.date)"
+                                        } label: {
+                                            Label("Copy", systemImage: "doc.on.doc.fill")
+                                        }
+
+                                        ShareLink(item: shareText(for: log), preview: SharePreview(log.name, image: "")) {
+                                            Label("Share", systemImage: "square.and.arrow.up")
+                                        }
+
+                                        Button(role: .destructive) { vm.logToEdit = log } label: {
+                                            Label("Edit", systemImage: "pencil")
+                                        }
+
+                                        Button(role: .destructive) { vm.db.delete(log: log) } label: {
+                                            Label("Delete", systemImage: "trash.fill")
+                                        }
+                                    }
+                                    .onTapGesture {
+                                        vm.logToEdit = log
+                                    }
+                                    .padding(.vertical, 4)
+                                    .onAppear {
+                                        // Load more when reaching the last item
+                                        if log.id == firestoreLogs.last?.id && vm.hasMoreData && !vm.isLoading {
+                                            vm.loadNextPage()
+                                        }
+                                    }
+                            }
+                            
+                            .onDelete { indexSet in
+                                indexSet.forEach { idx in
+                                    let log = group.logs[idx]
+                                    vm.db.delete(log: log)
+                                }
+                            }
+                            
+                            // Loading indicator at the bottom
+                            if vm.isLoading {
+                                HStack {
+                                    Spacer()
+                                    ProgressView()
+                                        .padding()
+                                    Spacer()
+                                }
+                            }
+                            
+                            // No more data indicator
+                            if !vm.hasMoreData && !firestoreLogs.isEmpty {
+                                HStack {
+                                    Spacer()
+                                    Text("No more expenses")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                        .padding()
+                                    Spacer()
+                                }
+                            }
                         }
                     }
-            }
-            .onDelete(perform: self.onDelete)
-            
-            // Loading indicator at the bottom
-            if vm.isLoading {
-                HStack {
-                    Spacer()
-                    ProgressView()
-                        .padding()
-                    Spacer()
                 }
-            }
-            
-            // No more data indicator
-            if !vm.hasMoreData && !firestoreLogs.isEmpty {
-                HStack {
-                    Spacer()
-                    Text("No more expenses")
-                        .font(.caption)
-                        .foregroundColor(.secondary)
-                        .padding()
-                    Spacer()
-                }
-            }
         }
         .listStyle(.plain)
         .refreshable {
@@ -170,6 +207,61 @@ struct LogListView: View {
     func updateFireStoreQuery() {
         $firestoreLogs.predicates = vm.predicates
     }
+    private func shareText(for log: ExpenseLog) -> String {
+        """
+        Expense: \(log.name)
+        Amount: \(log.amount)
+        Date: \(log.date)
+        Category: \(log.category)
+        """
+    }
+    private var groupedByMonth: [(monthStart: Date, logs: [ExpenseLog])] {
+        // 1) Sort logs according to the selected sort options
+        let sortedLogs = firestoreLogs.sorted { a, b in
+            switch vm.sortType {
+            case .date:
+                return vm.sortOrder == .ascending ? a.date < b.date : a.date > b.date
+            case .amount:
+                return vm.sortOrder == .ascending ? a.amount < b.amount : a.amount > b.amount
+            case .name:
+                return vm.sortOrder == .ascending
+                ? a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+                : a.name.localizedCaseInsensitiveCompare(b.name) == .orderedDescending
+            }
+        }
+
+        // 2) Group by (year, month)
+        let groups = Dictionary(grouping: sortedLogs) { log in
+            Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: log.date))!
+        }
+
+        // 3) Keep month sections ordered (usually newest month first)
+        return groups
+            .map { (monthStart: $0.key, logs: $0.value) } // already sorted within each month
+            .sorted { $0.monthStart > $1.monthStart }
+    }
+
+
+
+    private func monthTitle(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "MMM yyyy" // e.g. "Dec 2025"
+        return f.string(from: date)
+    }
+  
+
+    private func pushLastExpenseToWidget(_ logs: [ExpenseLog]) {
+        guard let last = logs.max(by: { $0.date < $1.date }) else { return }
+
+        let payload = LastExpenseWidgetData(name: last.name, date: last.date, amount: last.amount, currency: last.currency)
+        guard let encoded = try? JSONEncoder().encode(payload) else { return }
+
+        let shared = UserDefaults(suiteName: LastExpenseWidgetStore.appGroupID)
+        shared?.set(encoded, forKey: LastExpenseWidgetStore.key)
+
+        WidgetCenter.shared.reloadTimelines(ofKind: "aiexpensewidget")
+    }
+
     
     // MARK: - Manual Pagination Methods
     

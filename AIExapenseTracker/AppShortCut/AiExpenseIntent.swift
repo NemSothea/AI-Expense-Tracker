@@ -11,7 +11,7 @@ import SwiftUI
 
 struct AiExpenseIntent: AppIntent {
     
-    static var title: LocalizedStringResource = "Open Ai Expense"
+    static var title: LocalizedStringResource = "Open AI Expense"
     
     static var description: IntentDescription? {
         IntentDescription(
@@ -34,7 +34,7 @@ struct AiExpenseIntent: AppIntent {
     }
     
     @MainActor
-    func perform() async throws -> some IntentResult & ProvidesDialog {
+    func perform() async throws -> some IntentResult {
         // On macOS, we need to explicitly handle app activation
         #if os(macOS)
         // Bring app to foreground if it's already running
@@ -44,6 +44,6 @@ struct AiExpenseIntent: AppIntent {
         // NSApp.windows.first?.makeKeyAndOrderFront(nil)
         #endif
         
-        return .result(dialog: "Opening AI Expense Tracker...")
+        return .result()
     }
 }

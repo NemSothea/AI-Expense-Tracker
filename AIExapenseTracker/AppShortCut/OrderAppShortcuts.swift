@@ -19,8 +19,8 @@ struct OrderAppShortcuts: AppShortcutsProvider {
             phrases: ["\(.applicationName)",
                       "Open \(.applicationName)",
             ],
-            shortTitle: LocalizedStringResource("Open Ai Expense"),
-            systemImageName: "sparkles.2"
+            shortTitle: LocalizedStringResource("Open AI Expense"),
+            systemImageName: "sparkles"
         )
       
     }
