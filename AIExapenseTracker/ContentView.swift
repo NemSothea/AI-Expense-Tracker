@@ -10,6 +10,8 @@ import SwiftUI
 struct ContentView: View {
     
     @State var vm = LogListViewModel()
+    
+    
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
     
     // Add selection state for macOS
@@ -45,18 +47,25 @@ struct ContentView: View {
             }.tag(1)
             
             NavigationStack {
+                loadWebView()
+            }
+            .tabItem {
+                Label("Expense", systemImage: "tray")
+            }.tag(2)
+            
+            NavigationStack {
                 AIAssistantView()
             }
             .tabItem {
                 Label("AI Assistant", systemImage: "waveform")
-            }.tag(2)
+            }.tag(3)
             
             NavigationStack {
                 ExpenseReceiptScannerView()
             }
             .tabItem {
                 Label("Receipt Scanner", systemImage: "eye")
-            }.tag(3)
+            }.tag(4)
         }
     }
     
@@ -71,12 +80,14 @@ struct ContentView: View {
                 NavigationLink(value: 1) {
                     Label("Expense", systemImage: "tray")
                 }
-                
                 NavigationLink(value: 2) {
+                    Label("Quiz", systemImage: "q.circle")
+                }
+                NavigationLink(value: 3) {
                     Label("AI Assistant", systemImage: "waveform")
                 }
                 
-                NavigationLink(value: 3) {
+                NavigationLink(value: 4) {
                     Label("Receipt Scanner", systemImage: "eye")
                 }
             }
@@ -95,8 +106,11 @@ struct ContentView: View {
             case 1:
                 LogListContainerView(vm: $vm)
             case 2:
-                AIAssistantView()
+                LogListContainerView(vm: $vm)
+                
             case 3:
+                AIAssistantView()
+            case 4:
                 ExpenseReceiptScannerView()
             default:
                 AnimatedDashboardHomeView()
