@@ -70,6 +70,39 @@ enum Category: String, Identifiable, CaseIterable {
         }
     }
     
+    var localizedName: String {
+        let lang = LocalizationManager.shared.current
+        guard lang == .khmer else { return rawValue }
+        switch self {
+        case .Drink:                              return "ភេសជ្ជៈ"
+        case .accountingAndLegalFees:             return "ថ្លៃគណនេយ្យ និងច្បាប់"
+        case .bankFees:                           return "ថ្លៃធនាគារ"
+        case .consultantsAndProfessionalServices: return "សេវាប្រឹក្សា"
+        case .depreciation:                       return "រំលោះ"
+        case .employeeBenefits:                   return "អត្ថប្រយោជន៍បុគ្គលិក"
+        case .employeeExpenses:                   return "ចំណាយបុគ្គលិក"
+        case .entertainment:                      return "កំសាន្ត"
+        case .food:                               return "អាហារ"
+        case .gifts:                              return "អំណោយ"
+        case .health:                             return "សុខភាព"
+        case .insurance:                          return "ធានារ៉ាប់រង"
+        case .interest:                           return "ការប្រាក់"
+        case .learning:                           return "ការអប់រំ"
+        case .licensingFees:                      return "ថ្លៃអជ្ញាប័ណ្ណ"
+        case .marketing:                          return "ទីផ្សារ"
+        case .membershipFees:                     return "ថ្លៃសមាជិក"
+        case .officeSupplies:                     return "សម្ភារៈការិយាល័យ"
+        case .payroll:                            return "ប្រាក់ខែ"
+        case .repairs:                            return "ជួសជុល"
+        case .rent:                               return "ជួល"
+        case .rentOrMortgagePayments:             return "ការទូទាត់ជួល"
+        case .software:                           return "កម្មវិធី"
+        case .tax:                                return "ពន្ធ"
+        case .travel:                             return "ការធ្វើដំណើរ"
+        case .utilities:                          return "ឧបករណ៍ប្រើប្រាស់ទូទៅ"
+        }
+    }
+
     var color: Color {
         switch self {
         case .Drink:return Color(red: 0.082, green: 0.520, blue: 0.120)

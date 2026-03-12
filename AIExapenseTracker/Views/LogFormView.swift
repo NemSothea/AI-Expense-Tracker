@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct LogFormView: View {
-    
+
     @State var vm: FormViewModel
     @Environment(\.dismiss) var dismiss
+    @ObservedObject private var lm = LocalizationManager.shared
     @FocusState private var focusedField: Field?
     
     enum Field {
@@ -21,7 +22,7 @@ struct LogFormView: View {
     
 #if !os(macOS)
     var title: String {
-        ((vm.logToEdit == nil) ? "Create" : "Edit") + " Expense Log"
+        lm.L(vm.logToEdit == nil ? .createExpense : .editExpense)
     }
     
     var body: some View {
@@ -29,13 +30,13 @@ struct LogFormView: View {
             formView
                 .toolbar {
                     ToolbarItem(placement: .confirmationAction) {
-                        Button("Save") {
+                        Button(lm.L(.save)) {
                             self.onSaveTapped()
                         }
                         .disabled(vm.isSaveButtonDisabled)
                     }
                     ToolbarItem(placement: .cancellationAction) {
-                        Button("Cancel") {
+                        Button(lm.L(.cancel)) {
                             self.onCancelTapped()
                         }
                     }
@@ -49,10 +50,10 @@ struct LogFormView: View {
         VStack {
             formView.padding()
             HStack {
-                Button("Cancel") {
+                Button(lm.L(.cancel)) {
                     self.onCancelTapped()
                 }
-                Button("Save") {
+                Button(lm.L(.save)) {
                     self.onSaveTapped()
                 }
                 .buttonStyle(BorderedProminentButtonStyle())
@@ -69,7 +70,7 @@ struct LogFormView: View {
         Form {
             Section {
                 VStack(alignment: .leading, spacing: 8) {
-                    TextField("Name : ex. Drink with ex. girlfriend", text: $vm.name)
+                    TextField(lm.L(.namePlaceholder), text: $vm.name)
                         .disableAutocorrection(true)
                         .focused($focusedField, equals: .name)
                     
@@ -101,7 +102,7 @@ struct LogFormView: View {
             
             Section {
                 HStack {
-                    TextField("Amount", value: $vm.amount, formatter: vm.numberFormatter)
+                    TextField(lm.L(.amount), value: $vm.amount, formatter: vm.numberFormatter)
                         .focused($focusedField, equals: .amount)
 #if !os(macOS)
                         .keyboardType(.numbersAndPunctuation)
@@ -122,35 +123,36 @@ struct LogFormView: View {
             }
             
             Section {
-                Picker(selection: $vm.category, label: Text("Category")) {
+                Picker(selection: $vm.category, label: Text(lm.L(.category))) {
                     ForEach(Category.allCases) { category in
-                        Text(category.rawValue.capitalized).tag(category)
+                        Text(category.localizedName).tag(category)
                     }
                 }
             }
             
             Section {
                 DatePicker(selection: $vm.date, displayedComponents: [.date, .hourAndMinute]) {
-                    Text("Date")
+                    Text(lm.L(.date))
                 }
-                
+                .environment(\.locale, lm.current == .khmer ? Locale(identifier: "km_KH") : .current)
+
                 // Quick date buttons
                 HStack {
-                    Button("Now") {
+                    Button(lm.L(.now)) {
                         vm.date = Date()
                     }
                     .font(.caption)
-                    
+
                     Spacer()
-                    
-                    Button("Yesterday") {
+
+                    Button(lm.L(.yesterday)) {
                         vm.date = Calendar.current.date(byAdding: .day, value: -1, to: Date()) ?? Date()
                     }
                     .font(.caption)
-                    
+
                     Spacer()
-                    
-                    Button("Last Week") {
+
+                    Button(lm.L(.lastWeek)) {
                         vm.date = Calendar.current.date(byAdding: .day, value: -7, to: Date()) ?? Date()
                     }
                     .font(.caption)

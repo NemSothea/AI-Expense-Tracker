@@ -30,33 +30,35 @@ struct LogItemView: View {
     var compactView : some View {
         HStack(spacing: 16) {
             CategoriesImageView(category: log.categoryEnum)
-            VStack(alignment: .leading,spacing: 8) {
-                Text(log.name).font(.headline)
-                Text(log.dateText).font(.subheadline)
-               
-                
+            VStack(alignment: .leading, spacing: 8) {
+                Text(log.name).appFont(.headline)
+                Text(log.dateText).appFont(.subheadline)
             }
             Spacer()
-            Text(log.amountListText).font(.headline)
+            Text(log.amountListText).appFont(.headline)
         }
     }
+
     var regularView : some View {
         HStack(spacing: 16) {
             CategoriesImageView(category: log.categoryEnum)
             Spacer()
             Text(log.name)
-                .frame(minWidth: 0,maxWidth: .infinity,alignment: .leading)
+                .appFont(.subheadline)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             Spacer()
             Text(log.amountListText)
-                .frame(minWidth: 0,maxWidth: .infinity,alignment: .leading)
+                .appFont(.subheadline)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             Spacer()
             Text(log.dateText)
-                .frame(minWidth: 0,maxWidth: .infinity,alignment: .leading)
+                .appFont(.subheadline)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             Spacer()
-            Text(log.categoryEnum.rawValue)
-                .frame(minWidth: 0,maxWidth: .infinity,alignment: .leading)
+            Text(log.categoryEnum.localizedName)
+                .appFont(.subheadline)
+                .frame(minWidth: 0, maxWidth: .infinity, alignment: .leading)
             Spacer()
-            
         }
     }
     

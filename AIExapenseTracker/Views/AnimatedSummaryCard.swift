@@ -49,27 +49,27 @@ struct AnimatedSummaryCard: View {
             
             if showCents {
                 Text(animatedValue, format: format)
-                    .font(.headline)
+                    .appFont(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .monospacedDigit()
             } else {
                 Text(formatWithoutCents(animatedValue))
-                    .font(.headline)
+                    .appFont(.headline)
                     .fontWeight(.bold)
                     .foregroundColor(.primary)
                     .monospacedDigit()
             }
-            
+
             Text(title)
-                .font(.caption)
+                .appFont(.caption)
                 .foregroundColor(.secondary)
                 .opacity(isAppeared ? 1 : 0)
                 .offset(y: isAppeared ? 0 : 10)
-            
+
             if let subtitle = subtitle {
                 Text(subtitle)
-                    .font(.caption2)
+                    .appFont(.caption2)
                     .foregroundColor(color)
                     .fontWeight(.medium)
                     .opacity(isAppeared ? 1 : 0)

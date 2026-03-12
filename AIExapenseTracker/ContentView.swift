@@ -8,15 +8,15 @@
 import SwiftUI
 
 struct ContentView: View {
-    
+
     @State var vm = LogListViewModel()
-    
-    
+    @ObservedObject private var lm = LocalizationManager.shared
+
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
+
     // Add selection state for macOS
     @State private var selectedTab: Int? = 0 // Default to Home
-    
+
     var body: some View {
 #if os(macOS)
         splitView
@@ -29,76 +29,86 @@ struct ContentView: View {
         }
 #endif
     }
-    
+
     var tapView : some View {
         TabView {
             NavigationStack {
                 AnimatedDashboardHomeView()
             }
             .tabItem {
-                Label("Home", systemImage: "bolt.house.fill")
+                Label(lm.L(.home), systemImage: "bolt.house.fill")
             }.tag(0)
-            
+
             NavigationStack {
                 LogListContainerView(vm: $vm)
             }
             .tabItem {
-                Label("Expense", systemImage: "tray")
+                Label(lm.L(.expense), systemImage: "tray")
             }.tag(1)
-            
+
             NavigationStack {
-                loadWebView()
+                ProfileView()
             }
             .tabItem {
-                Label("Expense", systemImage: "tray")
+                Label(lm.L(.profile), systemImage: "person.circle")
             }.tag(2)
-            
-            NavigationStack {
-                AIAssistantView()
-            }
-            .tabItem {
-                Label("AI Assistant", systemImage: "waveform")
-            }.tag(3)
-            
-            NavigationStack {
-                ExpenseReceiptScannerView()
-            }
-            .tabItem {
-                Label("Receipt Scanner", systemImage: "eye")
-            }.tag(4)
+
+//            NavigationStack {
+//                loadWebView()
+//            }
+//            .tabItem {
+//                Label("Expense", systemImage: "tray")
+//            }.tag(2)
+//
+//            NavigationStack {
+//                AIAssistantView()
+//            }
+//            .tabItem {
+//                Label("AI Assistant", systemImage: "waveform")
+//            }.tag(3)
+//
+//            NavigationStack {
+//                ExpenseReceiptScannerView()
+//            }
+//            .tabItem {
+//                Label("Receipt Scanner", systemImage: "eye")
+//            }.tag(4)
         }
+        // Propagate Battambang as the default body font for all unlabeled text
+        // (Form labels, Picker rows, Buttons, Section headers, etc.)
+        .environment(\.font, lm.appBody)
     }
-    
+
     var splitView : some View {
         NavigationSplitView {
             List(selection: $selectedTab) {
-                
+
                 NavigationLink(value: 0) {
-                    Label("Home", systemImage: "bolt.house.fill")
+                    Label(lm.L(.home), systemImage: "bolt.house.fill")
                 }
-                
+
                 NavigationLink(value: 1) {
-                    Label("Expense", systemImage: "tray")
+                    Label(lm.L(.expense), systemImage: "tray")
                 }
                 NavigationLink(value: 2) {
-                    Label("Quiz", systemImage: "q.circle")
+                    Label(lm.L(.quiz), systemImage: "q.circle")
                 }
                 NavigationLink(value: 3) {
-                    Label("AI Assistant", systemImage: "waveform")
+                    Label(lm.L(.aiAssistant), systemImage: "waveform")
                 }
-                
+
                 NavigationLink(value: 4) {
-                    Label("Receipt Scanner", systemImage: "eye")
+                    Label(lm.L(.receiptScanner), systemImage: "eye")
                 }
             }
-            .navigationTitle("AI Expense Tracker")
+            .navigationTitle(lm.L(.appName))
             .onAppear {
                 // Ensure Home is selected by default on macOS
                 if selectedTab == nil {
                     selectedTab = 0
                 }
             }
-            
+
         } detail: {
             switch selectedTab {
             case 0:
@@ -107,7 +117,6 @@ struct ContentView: View {
                 LogListContainerView(vm: $vm)
             case 2:
                 LogListContainerView(vm: $vm)
-                
             case 3:
                 AIAssistantView()
             case 4:
@@ -116,6 +125,7 @@ struct ContentView: View {
                 AnimatedDashboardHomeView()
             }
         }
+        .environment(\.font, lm.appBody)
     }
 }
 

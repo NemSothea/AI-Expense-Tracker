@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct LogListContainerView: View {
-    
+
     @Binding var vm: LogListViewModel
-    
+    @ObservedObject private var lm = LocalizationManager.shared
+
     var body: some View {
         VStack(spacing:0) {
             FilterCategoriesView(selectedCategories: $vm.selectedCategories)
@@ -29,11 +30,11 @@ struct LogListContainerView: View {
                         Image(systemName: "plus")
                             .symbolRenderingMode(.monochrome)
                             .tint(.accentColor)
-                        Text("Add Exapense log")
+                        Text(lm.L(.addExpenseLog))
                     }
                     .foregroundStyle(Color.accentColor)
 #else
-                    Text("Add")
+                    Text(lm.L(.add))
 #endif
                 }
             }
@@ -43,7 +44,7 @@ struct LogListContainerView: View {
         }
         
 #if !os(macOS)
-    .navigationBarTitle("AI Expense Tracker",displayMode:.inline)
+    .navigationBarTitle(lm.L(.appName), displayMode: .inline)
 #endif
     }
     

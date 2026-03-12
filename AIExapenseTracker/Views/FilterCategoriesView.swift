@@ -8,8 +8,9 @@
 import SwiftUI
 
 struct FilterCategoriesView: View {
-    
+
     @Binding var selectedCategories: Set<Category>
+    @ObservedObject private var lm = LocalizationManager.shared
     private let categories = Category.allCases
     
     var body: some View {
@@ -33,7 +34,7 @@ struct FilterCategoriesView: View {
                     
                 } label: {
                     
-                    Text("Clear all filter selection \(self.selectedCategories.count)")
+                    Text(lm.L(.clearFilter) + " (\(self.selectedCategories.count))")
                 }
 
             }
@@ -91,7 +92,7 @@ struct FilterButtonView: View {
     
     var body: some View {
         HStack(spacing: 4) {
-            Text(category.rawValue.capitalized)
+            Text(category.localizedName)
                 .fixedSize(horizontal: true, vertical: true)
                 .padding(.horizontal, 16)
                 .padding(.vertical, 4)

@@ -10,8 +10,9 @@ import SwiftUI
 import WidgetKit
 
 struct LogListView: View {
-    
+
     @Binding var vm: LogListViewModel
+    @ObservedObject private var lm = LocalizationManager.shared
     @State private var allLogs: [ExpenseLog] = [] // For manual pagination
     
     @FirestoreQuery(collectionPath: "logs", predicates: [])
@@ -32,9 +33,9 @@ struct LogListView: View {
         .overlay {
             if firestoreLogs.isEmpty && !vm.isLoading {
                 ContentUnavailableView {
-                    Label("No Expenses", systemImage: "list.bullet.rectangle.portrait")
+                    Label(lm.L(.noExpenses), systemImage: "list.bullet.rectangle.portrait")
                 } description: {
-                    Text("Please add expenses using the add button")
+                    Text(lm.L(.noExpensesHint))
                 }
                 .padding(.horizontal)
             }
@@ -72,7 +73,7 @@ struct LogListView: View {
                 ForEach(groupedByMonth, id: \.monthStart) { group in
                     Section(header: Text(monthTitle(group.monthStart))) {
                         if group.logs.isEmpty {
-                            ContentUnavailableView("No expenses this month", systemImage: "tray")
+                            ContentUnavailableView(lm.L(.noExpensesThisMonth), systemImage: "tray")
                         } else {
                             ForEach(group.logs) { log in
                                 LogItemView(log: log)
@@ -81,19 +82,19 @@ struct LogListView: View {
                                         Button {
                                             UIPasteboard.general.string = "\(log.name) - \(log.amount)$ - \(log.date)"
                                         } label: {
-                                            Label("Copy", systemImage: "doc.on.doc.fill")
+                                            Label(lm.L(.copy), systemImage: "doc.on.doc.fill")
                                         }
 
                                         ShareLink(item: shareText(for: log), preview: SharePreview(log.name, image: "")) {
-                                            Label("Share", systemImage: "square.and.arrow.up")
+                                            Label(lm.L(.share), systemImage: "square.and.arrow.up")
                                         }
 
                                         Button(role: .destructive) { vm.logToEdit = log } label: {
-                                            Label("Edit", systemImage: "pencil")
+                                            Label(lm.L(.edit), systemImage: "pencil")
                                         }
 
                                         Button(role: .destructive) { vm.db.delete(log: log) } label: {
-                                            Label("Delete", systemImage: "trash.fill")
+                                            Label(lm.L(.delete), systemImage: "trash.fill")
                                         }
                                     }
                                     .onTapGesture {
@@ -129,7 +130,7 @@ struct LogListView: View {
                             if !vm.hasMoreData && !firestoreLogs.isEmpty {
                                 HStack {
                                     Spacer()
-                                    Text("No more expenses")
+                                    Text(lm.L(.noMoreExpenses))
                                         .font(.caption)
                                         .foregroundColor(.secondary)
                                         .padding()
@@ -168,10 +169,10 @@ struct LogListView: View {
                             }
                         }
                         .contextMenu {
-                            Button("Edit") {
+                            Button(lm.L(.edit)) {
                                 self.vm.logToEdit = log
                             }
-                            Button("Delete") {
+                            Button(lm.L(.delete)) {
                                 vm.db.delete(log: log)
                             }
                         }

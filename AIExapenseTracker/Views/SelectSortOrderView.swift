@@ -8,9 +8,10 @@
 import SwiftUI
 
 struct SelectSortOrderView: View {
-    
+
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
-    
+    @ObservedObject private var lm = LocalizationManager.shared
+
     @Binding var sortType: SortType
     @Binding var sortOrder: SortOrder
    
@@ -22,9 +23,9 @@ struct SelectSortOrderView: View {
     var body: some View {
         HStack {
 #if !os(macOS)
-            Text("Sort By")
+            Text(lm.L(.sortBy))
 #endif
-            Picker(selection: $sortType, label: Text("Sort By")) {
+            Picker(selection: $sortType, label: Text(lm.L(.sortBy))) {
                 ForEach(sortTypes) { type in
                 
                     if horizontalSizeClass == .compact {
@@ -39,9 +40,9 @@ struct SelectSortOrderView: View {
             }.pickerStyle(SegmentedPickerStyle())
             
 #if !os(macOS)
-            Text("Order By")
+            Text(lm.L(.orderBy))
 #endif
-            Picker(selection: $sortOrder, label: Text("Order By")) {
+            Picker(selection: $sortOrder, label: Text(lm.L(.orderBy))) {
                 ForEach(sortOrders) { order in
                 
                     if horizontalSizeClass == .compact {

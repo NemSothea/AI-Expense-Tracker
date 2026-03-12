@@ -10,9 +10,10 @@ import Charts
 import FirebaseFirestore
 
 struct AnimatedDashboardHomeView: View {
-    
+
     @StateObject private var vm = FirebaseDashboardViewModel()
-    
+    @ObservedObject private var lm = LocalizationManager.shared
+
     @State private var isRefreshing = false
     @State private var hasAppeared = false
 
@@ -38,7 +39,7 @@ struct AnimatedDashboardHomeView: View {
                 .padding()
                 
             }
-            .navigationTitle("Dashboard")
+            .navigationTitle(lm.L(.dashboard))
             .refreshable {
                 await refreshData()
             }
@@ -58,8 +59,8 @@ struct AnimatedDashboardHomeView: View {
                 vm.setupListener()
             }
         }
-        .alert("Error", isPresented: $vm.showErrorAlert) {
-            Button("OK", role: .cancel) { }
+        .alert(lm.L(.error), isPresented: $vm.showErrorAlert) {
+            Button(lm.L(.ok), role: .cancel) { }
         } message: {
             Text(vm.errorMessage)
         }
@@ -101,13 +102,13 @@ struct AnimatedDashboardHomeView: View {
                 .font(.system(size: 60))
                 .foregroundColor(.secondary)
                 .padding()
-            
-            Text("No Expenses Yet")
-                .font(.title2)
+
+            Text(lm.L(.noExpensesYet))
+                .appFont(.title2)
                 .fontWeight(.semibold)
-            
-            Text("Add your first expense to see your spending dashboard")
-                .font(.subheadline)
+
+            Text(lm.L(.dashboardEmptyHint))
+                .appFont(.subheadline)
                 .foregroundColor(.secondary)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -145,26 +146,26 @@ struct AnimatedDashboardHomeView: View {
             GridItem(.flexible())
         ], spacing: 16) {
             AnimatedSummaryCard(
-                title: "Total Spent",
+                title: lm.L(.totalSpent),
                 value: vm.totalExpenses,
                 format: .currency(code: vm.primaryCurrency),
                 icon: "dollarsign.circle.fill",
                 color: .blue,
                 delay: 0.1
             )
-            
+
             AnimatedSummaryCard(
-                title: "Avg Transaction",
+                title: lm.L(.avgTransaction),
                 value: vm.averageTransaction,
                 format: .currency(code: vm.primaryCurrency),
                 icon: "chart.line.uptrend.xyaxis",
                 color: .green,
                 delay: 0.2
             )
-            
+
             if let topCategory = vm.topCategories.first {
                 AnimatedSummaryCard(
-                    title: "Top Category",
+                    title: lm.L(.topCategory),
                     value: topCategory.totalAmount,
                     format: .currency(code: vm.primaryCurrency),
                     subtitle: topCategory.name,
@@ -174,10 +175,10 @@ struct AnimatedDashboardHomeView: View {
                 )
             } else {
                 AnimatedSummaryCard(
-                    title: "Top Category",
+                    title: lm.L(.topCategory),
                     value: 0,
                     format: .currency(code: vm.primaryCurrency),
-                    subtitle: "No data",
+                    subtitle: lm.L(.noData),
                     icon: "crown.fill",
                     color: .orange,
                     delay: 0.3
@@ -189,8 +190,8 @@ struct AnimatedDashboardHomeView: View {
     // MARK: - Chart Section
     private func chartSection() -> some View {
         VStack(alignment: .leading, spacing: 12) {
-            Text("Spending by Category")
-                .font(.headline)
+            Text(lm.L(.spendingByCategory))
+                .appFont(.headline)
                 .opacity(vm.topCategories.isEmpty ? 0.5 : 1)
             
             if vm.topCategories.isEmpty {
@@ -212,8 +213,8 @@ struct AnimatedDashboardHomeView: View {
             Image(systemName: "chart.pie")
                 .font(.system(size: 40))
                 .foregroundColor(.secondary)
-            Text("No spending data yet")
-                .font(.subheadline)
+            Text(lm.L(.noSpendingDataYet))
+                .appFont(.subheadline)
                 .foregroundColor(.secondary)
         }
         .frame(height: 200)
@@ -233,7 +234,7 @@ struct AnimatedDashboardHomeView: View {
                         .scaleEffect(category.totalAmount > 0 ? 1 : 0)
                     
                     Text(category.name)
-                        .font(.caption)
+                        .appFont(.caption)
                         .lineLimit(1)
                         .opacity(category.totalAmount > 0 ? 1 : 0)
                         .offset(x: category.totalAmount > 0 ? 0 : -20)
@@ -241,12 +242,12 @@ struct AnimatedDashboardHomeView: View {
                     Spacer()
                     
                     Text(category.totalAmount, format: .currency(code: vm.primaryCurrency))
-                        .font(.caption)
+                        .appFont(.caption)
                         .fontWeight(.semibold)
                         .monospacedDigit()
                     
                     Text("(\(Int(category.pctOfTotal))%)")
-                        .font(.caption2)
+                        .appFont(.caption2)
                         .foregroundColor(.secondary)
                         .monospacedDigit()
                 }
@@ -263,16 +264,16 @@ struct AnimatedDashboardHomeView: View {
     private func recentExpensesSection() -> some View {
         VStack(alignment: .leading, spacing: 12) {
             HStack {
-                Text("Recent Expenses")
-                    .font(.headline)
+                Text(lm.L(.recentExpenses))
+                    .appFont(.headline)
                 
                 Spacer()
             
             }
             
             if vm.recentExpenses.isEmpty {
-                Text("No recent expenses")
-                    .font(.subheadline)
+                Text(lm.L(.noRecentExpenses))
+                    .appFont(.subheadline)
                     .foregroundColor(.secondary)
                     .frame(maxWidth: .infinity, alignment: .center)
                     .padding()
@@ -301,10 +302,10 @@ struct AnimatedDashboardHomeView: View {
 
 // MARK: - Animated Recent Expense Row (Updated)
 struct AnimatedRecentExpenseRow: View {
-    
+
     let expense: RecentExpense
     let delay: Double
-    
+    @ObservedObject private var lm = LocalizationManager.shared
     @State private var isVisible = false
     
     var body: some View {
@@ -318,7 +319,7 @@ struct AnimatedRecentExpenseRow: View {
             
             VStack(alignment: .leading, spacing: 2) {
                 Text(expense.description)
-                    .font(.subheadline)
+                    .appFont(.subheadline)
                     .lineLimit(1)
                     .opacity(isVisible ? 1 : 0)
                     .offset(x: isVisible ? 0 : -20)
@@ -334,7 +335,7 @@ struct AnimatedRecentExpenseRow: View {
             
             VStack(alignment: .trailing, spacing: 2) {
                 Text(expense.formattedAmount)
-                    .font(.subheadline)
+                    .appFont(.subheadline)
                     .fontWeight(.medium)
                     .monospacedDigit()
                     .opacity(isVisible ? 1 : 0)

@@ -7,5 +7,12 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>UIAppFonts</key>
+	<array>
+		<string>Battambang-Regular.ttf</string>
+		<string>Battambang-Bold.ttf</string>
+		<string>Battambang-Light.ttf</string>
+		<string>Battambang-Black.ttf</string>
+	</array>
 </dict>
 </plist>
