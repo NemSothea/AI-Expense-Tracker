@@ -69,3 +69,6 @@ node_modules/
 .dataconnect
 
 *.xcuserdata
+xcuserdata/
+*.xcuserstate
+.DS_Store

@@ -13,8 +13,7 @@ struct LogListView: View {
 
     @Binding var vm: LogListViewModel
     @ObservedObject private var lm = LocalizationManager.shared
-    @State private var allLogs: [ExpenseLog] = [] // For manual pagination
-    
+
     @FirestoreQuery(collectionPath: "logs", predicates: [])
     private var firestoreLogs: [ExpenseLog]
     
@@ -52,16 +51,16 @@ struct LogListView: View {
             vm.resetPagination()
             updateFireStoreQuery()
         }
+        .onChange(of: vm.currentPage) {
+            updateFireStoreQuery()
+        }
         .onChange(of: firestoreLogs) { _, newLogs in
-            // Check if we have more data to load
             vm.hasMoreData = newLogs.count >= vm.pageSize * vm.currentPage
             vm.isLoading = false
-            
             pushLastExpenseToWidget(newLogs)
         }
         .onAppear {
-            // For manual pagination
-            loadInitialData()
+            updateFireStoreQuery()
         }
     }
     
@@ -264,24 +263,6 @@ struct LogListView: View {
     }
 
     
-    // MARK: - Manual Pagination Methods
-    
-    private func loadInitialData() {
-        vm.resetPagination()
-        vm.loadNextPageManually { [self] newLogs in
-            if let newLogs = newLogs {
-                self.allLogs = newLogs
-            }
-        }
-    }
-    
-    private func loadNextPage() {
-        vm.loadNextPageManually { [self] newLogs in
-            if let newLogs = newLogs {
-                self.allLogs.append(contentsOf: newLogs)
-            }
-        }
-    }
 }
 
 //#Preview {

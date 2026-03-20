@@ -91,14 +91,7 @@ struct ContentView: View {
                     Label(lm.L(.expense), systemImage: "tray")
                 }
                 NavigationLink(value: 2) {
-                    Label(lm.L(.quiz), systemImage: "q.circle")
-                }
-                NavigationLink(value: 3) {
-                    Label(lm.L(.aiAssistant), systemImage: "waveform")
-                }
-
-                NavigationLink(value: 4) {
-                    Label(lm.L(.receiptScanner), systemImage: "eye")
+                    Label(lm.L(.profile), systemImage: "person.circle")
                 }
             }
             .navigationTitle(lm.L(.appName))
@@ -116,11 +109,7 @@ struct ContentView: View {
             case 1:
                 LogListContainerView(vm: $vm)
             case 2:
-                LogListContainerView(vm: $vm)
-            case 3:
-                AIAssistantView()
-            case 4:
-                ExpenseReceiptScannerView()
+                ProfileView()
             default:
                 AnimatedDashboardHomeView()
             }

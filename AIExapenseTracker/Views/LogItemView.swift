@@ -16,7 +16,7 @@ struct LogItemView: View {
     
     var body: some View {
         
-        let _ = Self._printChanges()
+
         
         switch horizontalSizeClass {
             

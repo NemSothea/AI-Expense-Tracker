@@ -15,8 +15,6 @@ struct FilterCategoriesView: View {
     
     var body: some View {
         
-        let _ = Self._printChanges()
-        
         VStack {
             ScrollView(.horizontal) {
                 HStack(spacing:8) {
