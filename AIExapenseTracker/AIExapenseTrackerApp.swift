@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SwiftData
 
 @main
 struct AIExapenseTrackerApp: App {
@@ -16,10 +17,19 @@ struct AIExapenseTrackerApp: App {
     @UIApplicationDelegateAdaptor private var appDelegate: AppDelegate
 #endif
 
+    // Single ModelContainer shared across the whole app
+    let modelContainer: ModelContainer = {
+        let schema = Schema([LocalExpenseLog.self])
+        let config = ModelConfiguration(schema: schema, isStoredInMemoryOnly: false)
+        do {
+            return try ModelContainer(for: schema, configurations: [config])
+        } catch {
+            fatalError("Could not create ModelContainer: \(error)")
+        }
+    }()
+
     init() {
 #if os(iOS)
-        // Apply Battambang font to UINavigationBar on launch
-        // (respects whatever language was last saved in AppStorage)
         LocalizationManager.shared.applyNavigationBarAppearance()
 #endif
     }
@@ -27,11 +37,20 @@ struct AIExapenseTrackerApp: App {
     var body: some Scene {
         WindowGroup {
             LaunchScreenView()
+                .modelContainer(modelContainer)
+                .environment(NetworkMonitor.shared)
+                .task {
+                    // Wire the sync engine to the container once the scene is ready
+                    await MainActor.run {
+                        SyncManager.shared.configure(with: modelContainer)
+                        DatabaseManager.shared.configure(with: modelContainer.mainContext)
+                    }
+                }
             #if os(macOS)
-                .frame(minWidth:729, minHeight: 480)
+                .frame(minWidth: 729, minHeight: 480)
             #endif
         }
-        
+
         #if os(macOS)
         .windowResizability(.contentMinSize)
         #endif

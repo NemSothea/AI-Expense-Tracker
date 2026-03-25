@@ -15,7 +15,8 @@ struct ContentView: View {
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
     // Add selection state for macOS
-    @State private var selectedTab: Int? = 0 // Default to Home
+    @State private var selectedTab: Int? = 0  // split view (macOS / iPad)
+    @State private var mobileTab: Int = 0     // tab view (iPhone)
 
     var body: some View {
 #if os(macOS)
@@ -31,7 +32,7 @@ struct ContentView: View {
     }
 
     var tapView : some View {
-        TabView {
+        TabView(selection: $mobileTab) {
             NavigationStack {
                 AnimatedDashboardHomeView()
             }
@@ -45,38 +46,29 @@ struct ContentView: View {
             .tabItem {
                 Label(lm.L(.expense), systemImage: "tray")
             }.tag(1)
+            
+            NavigationStack {
+                VisionReceiptScannerView()
+            }
+            .tabItem {
+                Label(lm.L(.receiptScanner), systemImage: "doc.viewfinder")
+            }.tag(2)
 
             NavigationStack {
                 ProfileView()
             }
             .tabItem {
                 Label(lm.L(.profile), systemImage: "person.circle")
-            }.tag(2)
+            }.tag(3)
 
-//            NavigationStack {
-//                loadWebView()
-//            }
-//            .tabItem {
-//                Label("Expense", systemImage: "tray")
-//            }.tag(2)
-//
-//            NavigationStack {
-//                AIAssistantView()
-//            }
-//            .tabItem {
-//                Label("AI Assistant", systemImage: "waveform")
-//            }.tag(3)
-//
-//            NavigationStack {
-//                ExpenseReceiptScannerView()
-//            }
-//            .tabItem {
-//                Label("Receipt Scanner", systemImage: "eye")
-//            }.tag(4)
+           
         }
         // Propagate Battambang as the default body font for all unlabeled text
         // (Form labels, Picker rows, Buttons, Section headers, etc.)
         .environment(\.font, lm.appBody)
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToExpenseList)) { _ in
+            mobileTab = 1
+        }
     }
 
     var splitView : some View {
@@ -91,8 +83,13 @@ struct ContentView: View {
                     Label(lm.L(.expense), systemImage: "tray")
                 }
                 NavigationLink(value: 2) {
+                    Label(lm.L(.receiptScanner), systemImage: "doc.viewfinder")
+                }
+                
+                NavigationLink(value: 3) {
                     Label(lm.L(.profile), systemImage: "person.circle")
                 }
+               
             }
             .navigationTitle(lm.L(.appName))
             .onAppear {
@@ -109,12 +106,17 @@ struct ContentView: View {
             case 1:
                 LogListContainerView(vm: $vm)
             case 2:
+                VisionReceiptScannerView()
+            case 3:
                 ProfileView()
             default:
                 AnimatedDashboardHomeView()
             }
         }
         .environment(\.font, lm.appBody)
+        .onReceive(NotificationCenter.default.publisher(for: .navigateToExpenseList)) { _ in
+            selectedTab = 1
+        }
     }
 }
 

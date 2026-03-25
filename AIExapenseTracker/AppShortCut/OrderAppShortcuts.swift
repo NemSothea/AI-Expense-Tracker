@@ -25,7 +25,7 @@ struct OrderAppShortcuts: AppShortcutsProvider {
       
     }
     
-    static var shortcutTileColor: ShortcutTileColor = .blue
+    nonisolated(unsafe) static var shortcutTileColor: ShortcutTileColor = .blue
     
    
 }

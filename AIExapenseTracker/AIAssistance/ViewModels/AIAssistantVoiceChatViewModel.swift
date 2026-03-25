@@ -21,21 +21,21 @@ final class AIAssistantVoiceChatViewModel: VoiceChatViewModel<AIAssistantRespons
         self.functionsManager = .init(apiKey: apiKey)
         super.init(model: model, apiKey: apiKey)
         self.functionsManager.addLogConfirmationCallback = { [weak self] isConfirmed, props in
-            guard let self else {
-                return
-            }
-            let text: String
-            if isConfirmed {
-                try? self.db.add(log: props.log)
-                text = "Sure, i've added this log to your expenses list"
-            } else {
-                text = "Ok, i won't be adding this log"
-            }
-            
-            let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: nil, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))
-            
-            if let _  = self.state.idleResponse {
-                self.state = .idle(.customContent({ AIAssistantResponseView(response: response)}))
+            Task { @MainActor [weak self] in
+                guard let self else { return }
+                let text: String
+                if isConfirmed {
+                    self.db.add(log: props.log)
+                    text = "Sure, i've added this log to your expenses list"
+                } else {
+                    text = "Ok, i won't be adding this log"
+                }
+
+                let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: nil, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))
+
+                if let _ = self.state.idleResponse {
+                    self.state = .idle(.customContent({ AIAssistantResponseView(response: response) }))
+                }
             }
         }
     }

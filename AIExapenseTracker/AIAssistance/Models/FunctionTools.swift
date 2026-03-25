@@ -5,7 +5,7 @@
 //  Created by Alfian Losari on 09/06/24.
 //
 
-import ChatGPTSwift
+@preconcurrency import ChatGPTSwift
 import Foundation
 
 enum AIAssistantFunctionType: String {
@@ -14,7 +14,7 @@ enum AIAssistantFunctionType: String {
     case visualizeExpenses
 }
 
-typealias PropKeyValue = (key: String, value: [String: Any])
+typealias PropKeyValue = (key: String, value: [String: any Sendable])
 
 let titleProp = (key: "title",
                  value: [
@@ -40,7 +40,7 @@ let dateProp = (key: "date",
                     "description": "date of expense. always use this format as the response yyyy-MM-dd. if no year is provided just use current year"
                 ])
                 
-let categoryProp = (key: "category",
+let categoryProp: PropKeyValue = (key: "category",
                     value: [
                         "type": "string",
                         "enum": Category.allCases.map { $0.rawValue },
@@ -60,7 +60,7 @@ let endDateProp = (key: "endDate",
                     "description": "end date. always use this format as the response yyyy-MM-dd. if no year is provided just use current year"
                    ])
                    
- let sortOrderProp = (key: "sortOrder",
+let sortOrderProp: PropKeyValue = (key: "sortOrder",
                      value: [
                         "type": "string",
                         "enum": ["ascending", "descending"],
@@ -74,7 +74,7 @@ let quantityOfLogsProp = (key: "quantityOfLogs",
                           ])
 
 
-let chartTypeProp = (key: "chartType",
+let chartTypeProp: PropKeyValue = (key: "chartType",
                      value: [
                         "type": "string",
                         "enum": ["pie", "bar"],
@@ -83,7 +83,7 @@ let chartTypeProp = (key: "chartType",
                      
 
 func createParameters(properties: [PropKeyValue], requiredProperties: [PropKeyValue]? = nil) -> Components.Schemas.FunctionParameters {
-    var propsDict = [String: [String: Any]]()
+    var propsDict = [String: [String: any Sendable]]()
     properties.forEach {
         propsDict[$0.key] = $0.value
     }
@@ -101,7 +101,7 @@ func createFunction(name: String, description: String, properties: [PropKeyValue
         parameters: createParameters(properties: properties, requiredProperties: requiredProperties)))
 }
 
-let tools: [Components.Schemas.ChatCompletionTool] = [
+ let tools: [Components.Schemas.ChatCompletionTool] = [
     createFunction(name: AIAssistantFunctionType.addExpenseLog.rawValue,
                    description: "Add expense log",
                    properties: [titleProp,

@@ -11,7 +11,7 @@ import SwiftUI
 
 struct AiExpenseIntent: AppIntent {
     
-    static var title: LocalizedStringResource = "Open AI Expense"
+    nonisolated(unsafe) static var title: LocalizedStringResource = "Open AI Expense"
     
     static var description: IntentDescription? {
         IntentDescription(
@@ -21,7 +21,7 @@ struct AiExpenseIntent: AppIntent {
         )
     }
     
-    static var openAppWhenRun: Bool = true
+    nonisolated(unsafe) static var openAppWhenRun: Bool = true
     
     // For better macOS discoverability
     @MainActor

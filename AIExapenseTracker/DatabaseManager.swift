@@ -2,147 +2,83 @@
 //  DataBaseManager.swift
 //  AIExapenseTracker
 //
-//  Created by sothea007 on 10/12/24.
+//  All write operations (add / update / delete) now target SwiftData first so
+//  they complete instantly, even with no network.  SyncManager picks up the
+//  pending records and pushes them to Firestore in the background.
+//
+//  The Firestore CollectionReference is still exposed so that SyncManager and
+//  any legacy read-paths that have not yet migrated can use it directly.
 //
 
 import Foundation
+import SwiftData
 import FirebaseFirestore
 
-final class DatabaseManager : @unchecked Sendable {
-    
+final class DatabaseManager: @unchecked Sendable {
+
     static let shared = DatabaseManager()
-    
+
     private init() {}
-    
-    private(set) lazy var logsCollection : CollectionReference = {
+
+    // Injected once at app startup (from AIExapenseTrackerApp)
+    private var modelContext: ModelContext?
+
+    func configure(with context: ModelContext) {
+        modelContext = context
+    }
+
+    // Keep the collection reference so SyncManager can use it
+    private(set) lazy var logsCollection: CollectionReference = {
         Firestore.firestore().collection("logs")
     }()
-    
-    func add(log : ExpenseLog) throws {
-        try logsCollection.document(log.id).setData(from: log)
-    }
-    
-    func update(log : ExpenseLog) {
-        logsCollection.document(log.id).updateData([
-            "name" : log.name,
-            "amount":log.amount,
-            "category":log.category,
-            "date":log.date
-        ])
-    }
-    func delete(log : ExpenseLog) {
-        logsCollection.document(log.id).delete()
-    }
-    
-}
 
-// MARK: - Update DatabaseManager for better compatibility
-extension DatabaseManager {
-    
-    func getLogs(completion: @escaping ([ExpenseLog]?, Error?) -> Void) {
-        logsCollection
-            .order(by: "date", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    completion([], nil)
-                    return
-                }
-                
-                let logs = documents.compactMap { document in
-                    try? document.data(as: ExpenseLog.self)
-                }
-                
-                completion(logs, nil)
-            }
+    // MARK: - Local-first writes
+
+    @MainActor func add(log: ExpenseLog) {
+        guard let context = modelContext else { return }
+        let local = LocalExpenseLog.from(log, syncStatus: .pendingUpload)
+        context.insert(local)
+        save(context)
+        SyncManager.shared.syncPendingChanges()
     }
-    
-    func getLogsByDateRange(from startDate: Date, to endDate: Date, completion: @escaping ([ExpenseLog]?, Error?) -> Void) {
-        logsCollection
-            .whereField("date", isGreaterThanOrEqualTo: startDate)
-            .whereField("date", isLessThanOrEqualTo: endDate)
-            .order(by: "date", descending: true)
-            .getDocuments { snapshot, error in
-                if let error = error {
-                    completion(nil, error)
-                    return
-                }
-                
-                guard let documents = snapshot?.documents else {
-                    completion([], nil)
-                    return
-                }
-                
-                let logs = documents.compactMap { document in
-                    try? document.data(as: ExpenseLog.self)
-                }
-                
-                completion(logs, nil)
-            }
-    }
-}
-extension DatabaseManager {
-    
-    func getLogsPaginated(
-        pageSize: Int,
-        lastDocument: DocumentSnapshot? = nil,
-        sortBy: String = "date",
-        descending: Bool = true,
-        categories: [String]? = nil,
-        completion: @escaping ([ExpenseLog]?, DocumentSnapshot?, Error?) -> Void
-    ) {
-        var query: Query = logsCollection
-            .order(by: sortBy, descending: descending)
-            .limit(to: pageSize)
-        
-        // Apply category filter
-        if let categories = categories, !categories.isEmpty {
-            query = query.whereField("category", in: categories)
-        }
-        
-        // Apply pagination
-        if let lastDocument = lastDocument {
-            query = query.start(afterDocument: lastDocument)
-        }
-        
-        query.getDocuments { snapshot, error in
-            if let error = error {
-                completion(nil, nil, error)
-                return
-            }
-            
-            guard let documents = snapshot?.documents else {
-                completion([], nil, nil)
-                return
-            }
-            
-            let logs = documents.compactMap { document in
-                try? document.data(as: ExpenseLog.self)
-            }
-            
-            let lastDocument = documents.last
-            completion(logs, lastDocument, nil)
+
+    @MainActor func update(log: ExpenseLog) {
+        guard let context = modelContext else { return }
+        let id = log.id
+        let descriptor = FetchDescriptor<LocalExpenseLog>(
+            predicate: #Predicate { $0.id == id }
+        )
+        if let local = try? context.fetch(descriptor).first {
+            local.name = log.name
+            local.amount = log.amount
+            local.category = log.category
+            local.currency = log.currency
+            local.date = log.date
+            local.syncStatus = SyncStatus.pendingUpload.rawValue
+            local.localModifiedAt = Date()
+            save(context)
+            SyncManager.shared.syncPendingChanges()
         }
     }
-    
-    func getTotalCount(categories: [String]? = nil, completion: @escaping (Int?, Error?) -> Void) {
-        var query: Query = logsCollection
-        
-        if let categories = categories, !categories.isEmpty {
-            query = query.whereField("category", in: categories)
+
+    @MainActor func delete(log: ExpenseLog) {
+        guard let context = modelContext else { return }
+        let id = log.id
+        let descriptor = FetchDescriptor<LocalExpenseLog>(
+            predicate: #Predicate { $0.id == id }
+        )
+        if let local = try? context.fetch(descriptor).first {
+            // Mark as pending delete so it disappears from UI immediately
+            // and SyncManager will remove it from Firestore when online.
+            local.syncStatus = SyncStatus.pendingDelete.rawValue
+            save(context)
+            SyncManager.shared.syncPendingChanges()
         }
-        
-        query.getDocuments { snapshot, error in
-            if let error = error {
-                completion(nil, error)
-                return
-            }
-            
-            completion(snapshot?.count, nil)
-        }
+    }
+
+    // MARK: - Private helpers
+
+    private func save(_ context: ModelContext) {
+        try? context.save()
     }
 }

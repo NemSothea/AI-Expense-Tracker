@@ -7,13 +7,13 @@
 
 import Foundation
 
-typealias AddExpenseLogConfirmationCallback = ((Bool, AddExpenseLogViewProperties) -> Void)
+typealias AddExpenseLogConfirmationCallback = @Sendable (Bool, AddExpenseLogViewProperties) -> Void
 
-enum UserConfirmation {
+enum UserConfirmation: Sendable {
     case pending, confirmed, cancelled
 }
 
-struct AddExpenseLogViewProperties {
+struct AddExpenseLogViewProperties: Sendable {
     let log: ExpenseLog
     let messageID: UUID?
     let userConfirmation: UserConfirmation

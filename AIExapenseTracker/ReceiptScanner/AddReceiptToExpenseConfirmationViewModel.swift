@@ -44,12 +44,12 @@ class AddReceiptToExpenseConfirmationViewModel {
         self.numberFormatter.currencyCode = self.currencyCode
     }
     
-    func save() {
+    @MainActor func save() {
         expenseLogs.forEach { log in
             var _log = log
             _log.date = self.date
             _log.currency = self.currencyCode
-            try? db.add(log: _log)
+            db.add(log: _log)
         }
     }
     

@@ -33,7 +33,7 @@ enum AppLanguage: String, CaseIterable, Identifiable {
 // MARK: - Localization Manager
 
 final class LocalizationManager: ObservableObject {
-    static let shared = LocalizationManager()
+    nonisolated(unsafe) static let shared = LocalizationManager()
 
     @AppStorage("appLanguage") var languageCode: String = AppLanguage.english.rawValue {
         didSet { objectWillChange.send() }
@@ -43,7 +43,7 @@ final class LocalizationManager: ObservableObject {
         AppLanguage(rawValue: languageCode) ?? .english
     }
 
-    func set(_ language: AppLanguage) {
+    @MainActor func set(_ language: AppLanguage) {
         languageCode = language.rawValue
         applyNavigationBarAppearance()
         refreshWindowHierarchy()
@@ -60,7 +60,7 @@ final class LocalizationManager: ObservableObject {
 extension LocalizationManager {
 
     /// Call once on app launch and automatically on every language change via set(_:).
-    func applyNavigationBarAppearance() {
+    @MainActor func applyNavigationBarAppearance() {
         let isKhmer = current == .khmer
 
         let largeTitleFont = isKhmer
@@ -87,9 +87,9 @@ extension LocalizationManager {
     }
 
     /// Forces existing navigation bars to re-read UIAppearance settings immediately.
-    private func refreshWindowHierarchy() {
+    @MainActor private func refreshWindowHierarchy() {
         guard let scene  = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-              let window = scene.windows.first else { return }
+              let window = scene.keyWindow else { return }
         for view in window.subviews {
             view.removeFromSuperview()
             window.addSubview(view)
@@ -243,4 +243,48 @@ extension LK {
     static let quiz                 = LK(en: "Quiz",                          km: "កម្រងសំណួរ")
     static let aiAssistant          = LK(en: "AI Assistant",                  km: "AI ជំនួយការ")
     static let receiptScanner       = LK(en: "Receipt Scanner",               km: "ស្កែនវិក្កយបត្រ")
+
+    // Receipt Scanner — actions
+    static let scanReceipt          = LK(en: "Scan Receipt",                  km: "ស្កែនវិក្កយបត្រ")
+    static let scanNewReceipt       = LK(en: "Scan New Receipt",              km: "ស្កែនវិក្កយបត្រថ្មី")
+    static let takePhoto            = LK(en: "Take Photo",                    km: "ថតរូបភាព")
+    static let chooseFromLibrary    = LK(en: "Choose from Library",           km: "ជ្រើសរើសពីបណ្ណាល័យ")
+    static let tryAgain             = LK(en: "Try Again",                     km: "សាកល្បងម្ដងទៀត")
+    static let scanItems            = LK(en: "Items",                         km: "មុខ")
+    static let addItemsPrefix       = LK(en: "Add",                           km: "បន្ថែម")
+    static let foundSuffix          = LK(en: "Found",                         km: "បានរកឃើញ")
+
+    // Receipt Scanner — state titles
+    static let readyToScan          = LK(en: "Ready to Scan",                 km: "រួចរាល់សម្រាប់ស្កែន")
+    static let loadingImage         = LK(en: "Loading Image",                 km: "កំពុងផ្ទុករូបភាព")
+    static let readingText          = LK(en: "Reading Text",                  km: "កំពុងអានអត្ថបទ")
+    static let scanFailed           = LK(en: "Scan Failed",                   km: "ស្កែនបរាជ័យ")
+
+    // Receipt Scanner — state subtitles
+    static let scanReadyHint        = LK(en: "Choose a receipt photo to get started",
+                                         km: "ជ្រើសរើសរូបភាពវិក្កយបត្រដើម្បីចាប់ផ្ដើម")
+    static let scanLoadingHint      = LK(en: "Preparing your image…",         km: "កំពុងរៀបចំរូបភាព…")
+    static let scanScanningHint     = LK(en: "Extracting items and prices on-device…",
+                                         km: "កំពុងទាញយកទំនិញ និងតម្លៃ…")
+    static let scanSuccessHint      = LK(en: "Tap 'Add Items' to review and save",
+                                         km: "ចុច 'បន្ថែមមុខ' ដើម្បីពិនិត្យ និងរក្សាទុក")
+    static let scanFailedHint       = LK(en: "Tap 'Try Again' to retry",      km: "ចុច 'សាកល្បងម្ដងទៀត' ដើម្បីព្យាយាមម្ដងទៀត")
+
+    // Receipt Scanner — tips
+    static let tipGoodLighting      = LK(en: "Good lighting helps",           km: "ពន្លឺល្អជួយបានច្រើន")
+    static let tipFlatReceipt       = LK(en: "Keep receipt flat",             km: "ទុកវិក្កយបត្រឱ្យរាបស្មើ")
+    static let tipFullReceipt       = LK(en: "Capture the full receipt",      km: "ថតវិក្កយបត្រទាំងមូល")
+    static let tipFreeNoKey         = LK(en: "100% free — no API key",        km: "ឥតគិតថ្លៃ ១០០%")
+
+    // Export
+    static let exportExpenses       = LK(en: "Export Expenses",               km: "នាំចេញចំណាយ")
+    static let exportCSV            = LK(en: "Export as CSV",                 km: "នាំចេញជា CSV")
+    static let exportPDF            = LK(en: "Export as PDF",                 km: "នាំចេញជា PDF")
+    static let exportText           = LK(en: "Export as Text",                km: "នាំចេញជាអត្ថបទ")
+
+    // Search
+    static let search               = LK(en: "Search",                        km: "ស្វែងរក")
+    static let searchPlaceholder    = LK(en: "Search expenses…",              km: "ស្វែងរកចំណាយ…")
+    static let noResults            = LK(en: "No Results",                    km: "គ្មានលទ្ធផល")
+    static let noResultsHint        = LK(en: "Try a different search term",   km: "សាកល្បងពាក្យស្វែងរកផ្សេង")
 }

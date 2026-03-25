@@ -2,10 +2,8 @@
 //  LogListView.swift
 //  AIExapenseTracker
 //
-//  Created by sothea007 on 10/12/24.
-//
 
-import FirebaseFirestore
+import SwiftData
 import SwiftUI
 import WidgetKit
 
@@ -14,143 +12,180 @@ struct LogListView: View {
     @Binding var vm: LogListViewModel
     @ObservedObject private var lm = LocalizationManager.shared
 
-    @FirestoreQuery(collectionPath: "logs", predicates: [])
-    private var firestoreLogs: [ExpenseLog]
-    
+    // All non-deleted records, newest first.
+    // SwiftData keeps this in sync; any change triggers a view re-render.
+    @Query(filter: #Predicate<LocalExpenseLog> { $0.syncStatus != "pendingDelete" },
+           sort: \LocalExpenseLog.date,
+           order: .reverse)
+    private var allLocalLogs: [LocalExpenseLog]
+
+    // Convert to ExpenseLog and apply category, search, and sort filters from the VM
+    private var visibleLogs: [ExpenseLog] {
+        let base = allLocalLogs.map { $0.toExpenseLog() }
+
+        let categoryFiltered = vm.selectedCategories.isEmpty
+            ? base
+            : base.filter { vm.selectedCategories.contains($0.categoryEnum) }
+
+        let searched: [ExpenseLog]
+        if vm.searchText.trimmingCharacters(in: .whitespaces).isEmpty {
+            searched = categoryFiltered
+        } else {
+            let query = vm.searchText.lowercased()
+            searched = categoryFiltered.filter {
+                $0.name.lowercased().contains(query)
+                || $0.category.lowercased().contains(query)
+                || $0.amountText.lowercased().contains(query)
+            }
+        }
+
+        return searched.sorted { a, b in
+            switch vm.sortType {
+            case .date:
+                return vm.sortOrder == .ascending ? a.date < b.date : a.date > b.date
+            case .amount:
+                return vm.sortOrder == .ascending ? a.amount < b.amount : a.amount > b.amount
+            case .name:
+                return vm.sortOrder == .ascending
+                    ? a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
+                    : a.name.localizedCaseInsensitiveCompare(b.name) == .orderedDescending
+            }
+        }
+    }
+
+    // Page slice
+    private var pagedLogs: [ExpenseLog] {
+        let limit = vm.pageSize * vm.currentPage
+        return Array(visibleLogs.prefix(limit))
+    }
+
     var body: some View {
         Group {
-            // Choose either approach:
-            // Approach 1: Auto-loading with FirestoreQuery (simpler)
-            autoLoadingListView
-  
+#if os(iOS)
+            iOSListView
+#else
+            macOSListView
+#endif
         }
         .sheet(item: $vm.logToEdit, onDismiss: {
             vm.logToEdit = nil
         }) { log in
             LogFormView(vm: .init(logToEdit: log))
         }
+        .searchable(
+            text: $vm.searchText,
+            placement: .navigationBarDrawer(displayMode: .always),
+            prompt: lm.L(.searchPlaceholder)
+        )
         .overlay {
-            if firestoreLogs.isEmpty && !vm.isLoading {
+            if allLocalLogs.isEmpty {
                 ContentUnavailableView {
                     Label(lm.L(.noExpenses), systemImage: "list.bullet.rectangle.portrait")
                 } description: {
                     Text(lm.L(.noExpensesHint))
                 }
                 .padding(.horizontal)
+            } else if !vm.searchText.isEmpty && visibleLogs.isEmpty {
+                ContentUnavailableView {
+                    Label(lm.L(.noResults), systemImage: "magnifyingglass")
+                } description: {
+                    Text(lm.L(.noResultsHint))
+                }
             }
         }
-        .onChange(of: vm.sortType) {
-            vm.resetPagination()
-            updateFireStoreQuery()
-        }
-        .onChange(of: vm.sortOrder) {
-            vm.resetPagination()
-            updateFireStoreQuery()
-        }
-        .onChange(of: vm.selectedCategories) {
-            vm.resetPagination()
-            updateFireStoreQuery()
-        }
-        .onChange(of: vm.currentPage) {
-            updateFireStoreQuery()
-        }
-        .onChange(of: firestoreLogs) { _, newLogs in
+        .onChange(of: allLocalLogs) { _, newLogs in
             vm.hasMoreData = newLogs.count >= vm.pageSize * vm.currentPage
-            vm.isLoading = false
-            pushLastExpenseToWidget(newLogs)
+            pushLastExpenseToWidget(newLogs.map { $0.toExpenseLog() })
         }
-        .onAppear {
-            updateFireStoreQuery()
-        }
+        .onChange(of: vm.sortType)          { vm.resetPagination() }
+        .onChange(of: vm.sortOrder)         { vm.resetPagination() }
+        .onChange(of: vm.selectedCategories){ vm.resetPagination() }
+        .onChange(of: vm.searchText)        { vm.resetPagination() }
     }
-    
-    // MARK: - Approach 1: Auto-loading with FirestoreQuery
-    var autoLoadingListView: some View {
-#if os(iOS)
+
+    // MARK: - iOS List
+
+    private var iOSListView: some View {
         List {
-            
-                ForEach(groupedByMonth, id: \.monthStart) { group in
-                    Section(header: Text(monthTitle(group.monthStart))) {
-                        if group.logs.isEmpty {
-                            ContentUnavailableView(lm.L(.noExpensesThisMonth), systemImage: "tray")
-                        } else {
-                            ForEach(group.logs) { log in
-                                LogItemView(log: log)
-                                    .contentShape(Rectangle())
-                                    .contextMenu {
-                                        Button {
-                                            UIPasteboard.general.string = "\(log.name) - \(log.amount)$ - \(log.date)"
-                                        } label: {
-                                            Label(lm.L(.copy), systemImage: "doc.on.doc.fill")
-                                        }
-
-                                        ShareLink(item: shareText(for: log), preview: SharePreview(log.name, image: "")) {
-                                            Label(lm.L(.share), systemImage: "square.and.arrow.up")
-                                        }
-
-                                        Button(role: .destructive) { vm.logToEdit = log } label: {
-                                            Label(lm.L(.edit), systemImage: "pencil")
-                                        }
-
-                                        Button(role: .destructive) { vm.db.delete(log: log) } label: {
-                                            Label(lm.L(.delete), systemImage: "trash.fill")
-                                        }
+            ForEach(groupedByMonth(pagedLogs), id: \.monthStart) { group in
+                Section(header: Text(monthTitle(group.monthStart))) {
+                    if group.logs.isEmpty {
+                        ContentUnavailableView(lm.L(.noExpensesThisMonth), systemImage: "tray")
+                    } else {
+                        ForEach(group.logs) { log in
+                            LogItemView(log: log)
+                                .contentShape(Rectangle())
+                                .contextMenu {
+                                    Button {
+                                        UIPasteboard.general.string =
+                                            "\(log.name) - \(log.amount)$ - \(log.date)"
+                                    } label: {
+                                        Label(lm.L(.copy), systemImage: "doc.on.doc.fill")
                                     }
-                                    .onTapGesture {
+
+                                    ShareLink(
+                                        item: shareText(for: log),
+                                        preview: SharePreview(log.name, image: "")
+                                    ) {
+                                        Label(lm.L(.share), systemImage: "square.and.arrow.up")
+                                    }
+
+                                    Button(role: .destructive) {
                                         vm.logToEdit = log
+                                    } label: {
+                                        Label(lm.L(.edit), systemImage: "pencil")
                                     }
-                                    .padding(.vertical, 4)
-                                    .onAppear {
-                                        // Load more when reaching the last item
-                                        if log.id == firestoreLogs.last?.id && vm.hasMoreData && !vm.isLoading {
-                                            vm.loadNextPage()
-                                        }
+
+                                    Button(role: .destructive) {
+                                        vm.db.delete(log: log)
+                                    } label: {
+                                        Label(lm.L(.delete), systemImage: "trash.fill")
                                     }
-                            }
-                            
-                            .onDelete { indexSet in
-                                indexSet.forEach { idx in
-                                    let log = group.logs[idx]
-                                    vm.db.delete(log: log)
                                 }
-                            }
-                            
-                            // Loading indicator at the bottom
-                            if vm.isLoading {
-                                HStack {
-                                    Spacer()
-                                    ProgressView()
-                                        .padding()
-                                    Spacer()
+                                .onTapGesture { vm.logToEdit = log }
+                                .padding(.vertical, 4)
+                                .onAppear {
+                                    // Infinite scroll: load next page at the last visible item
+                                    if log.id == pagedLogs.last?.id && vm.hasMoreData {
+                                        vm.loadNextPage()
+                                    }
                                 }
-                            }
-                            
-                            // No more data indicator
-                            if !vm.hasMoreData && !firestoreLogs.isEmpty {
-                                HStack {
-                                    Spacer()
-                                    Text(lm.L(.noMoreExpenses))
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                        .padding()
-                                    Spacer()
-                                }
+                        }
+                        .onDelete { indexSet in
+                            indexSet.forEach { vm.db.delete(log: group.logs[$0]) }
+                        }
+
+                        if vm.isLoading {
+                            HStack { Spacer(); ProgressView().padding(); Spacer() }
+                        }
+
+                        if !vm.hasMoreData && !pagedLogs.isEmpty {
+                            HStack {
+                                Spacer()
+                                Text(lm.L(.noMoreExpenses))
+                                    .font(.caption)
+                                    .foregroundColor(.secondary)
+                                    .padding()
+                                Spacer()
                             }
                         }
                     }
                 }
+            }
         }
         .listStyle(.plain)
         .refreshable {
-            // Pull to refresh
             vm.resetPagination()
-            updateFireStoreQuery()
         }
-#else
+    }
+
+    // MARK: - macOS List
+
+    private var macOSListView: some View {
         ZStack {
             ScrollView {
                 LazyVStack(spacing: 0) {
-                    ForEach(firestoreLogs) { log in
+                    ForEach(pagedLogs) { log in
                         VStack {
                             LogItemView(log: log)
                             Divider()
@@ -158,34 +193,22 @@ struct LogListView: View {
                         .frame(minWidth: 0, maxHeight: .infinity, alignment: .leading)
                         .contentShape(Rectangle())
                         .padding(.horizontal)
-                        .onTapGesture {
-                            self.vm.logToEdit = log
-                        }
+                        .onTapGesture { vm.logToEdit = log }
                         .onAppear {
-                            // Load more when reaching the last item
-                            if log == firestoreLogs.last && vm.hasMoreData && !vm.isLoading {
+                            if log == pagedLogs.last && vm.hasMoreData {
                                 vm.loadNextPage()
                             }
                         }
                         .contextMenu {
-                            Button(lm.L(.edit)) {
-                                self.vm.logToEdit = log
-                            }
-                            Button(lm.L(.delete)) {
-                                vm.db.delete(log: log)
-                            }
+                            Button(lm.L(.edit)) { vm.logToEdit = log }
+                            Button(lm.L(.delete)) { vm.db.delete(log: log) }
                         }
                     }
-                    
-                    // Loading indicator
-                    if vm.isLoading {
-                        ProgressView()
-                            .padding()
-                    }
-                    
-                    // No more data indicator
-                    if !vm.hasMoreData && !firestoreLogs.isEmpty {
-                        Text("No more expenses")
+
+                    if vm.isLoading { ProgressView().padding() }
+
+                    if !vm.hasMoreData && !pagedLogs.isEmpty {
+                        Text(lm.L(.noMoreExpenses))
                             .font(.caption)
                             .foregroundColor(.secondary)
                             .padding()
@@ -194,19 +217,27 @@ struct LogListView: View {
                 .contentMargins(.vertical, 8, for: .scrollContent)
             }
         }
-#endif
     }
-    
-    private func onDelete(with indexSet: IndexSet) {
-        indexSet.forEach { index in
-            let log = firestoreLogs[index]
-            vm.db.delete(log: log)
+
+    // MARK: - Helpers
+
+    private func groupedByMonth(_ logs: [ExpenseLog]) -> [(monthStart: Date, logs: [ExpenseLog])] {
+        let groups = Dictionary(grouping: logs) { log in
+            Calendar.current.date(
+                from: Calendar.current.dateComponents([.year, .month], from: log.date)
+            )!
         }
+        return groups
+            .map { (monthStart: $0.key, logs: $0.value) }
+            .sorted { $0.monthStart > $1.monthStart }
     }
-    
-    func updateFireStoreQuery() {
-        $firestoreLogs.predicates = vm.predicates
+
+    private func monthTitle(_ date: Date) -> String {
+        let f = DateFormatter()
+        f.dateFormat = "MMM yyyy"
+        return f.string(from: date)
     }
+
     private func shareText(for log: ExpenseLog) -> String {
         """
         Expense: \(log.name)
@@ -215,57 +246,16 @@ struct LogListView: View {
         Category: \(log.category)
         """
     }
-    private var groupedByMonth: [(monthStart: Date, logs: [ExpenseLog])] {
-        // 1) Sort logs according to the selected sort options
-        let sortedLogs = firestoreLogs.sorted { a, b in
-            switch vm.sortType {
-            case .date:
-                return vm.sortOrder == .ascending ? a.date < b.date : a.date > b.date
-            case .amount:
-                return vm.sortOrder == .ascending ? a.amount < b.amount : a.amount > b.amount
-            case .name:
-                return vm.sortOrder == .ascending
-                ? a.name.localizedCaseInsensitiveCompare(b.name) == .orderedAscending
-                : a.name.localizedCaseInsensitiveCompare(b.name) == .orderedDescending
-            }
-        }
-
-        // 2) Group by (year, month)
-        let groups = Dictionary(grouping: sortedLogs) { log in
-            Calendar.current.date(from: Calendar.current.dateComponents([.year, .month], from: log.date))!
-        }
-
-        // 3) Keep month sections ordered (usually newest month first)
-        return groups
-            .map { (monthStart: $0.key, logs: $0.value) } // already sorted within each month
-            .sorted { $0.monthStart > $1.monthStart }
-    }
-
-
-
-    private func monthTitle(_ date: Date) -> String {
-        let f = DateFormatter()
-        f.dateFormat = "MMM yyyy" // e.g. "Dec 2025"
-        return f.string(from: date)
-    }
-  
 
     private func pushLastExpenseToWidget(_ logs: [ExpenseLog]) {
         guard let last = logs.max(by: { $0.date < $1.date }) else { return }
-
-        let payload = LastExpenseWidgetData(name: last.name, date: last.date, amount: last.amount, currency: last.currency)
+        let payload = LastExpenseWidgetData(
+            name: last.name, date: last.date,
+            amount: last.amount, currency: last.currency
+        )
         guard let encoded = try? JSONEncoder().encode(payload) else { return }
-
         let shared = UserDefaults(suiteName: LastExpenseWidgetStore.appGroupID)
         shared?.set(encoded, forKey: LastExpenseWidgetStore.key)
-
         WidgetCenter.shared.reloadTimelines(ofKind: "aiexpensewidget")
     }
-
-    
 }
-
-//#Preview {
-//    @Previewable @State var vm = LogListViewModel()
-//    return LogListView(vm: $vm)
-//}

@@ -6,16 +6,21 @@
 //
 
 import SwiftUI
+import SwiftData
 import Charts
-import FirebaseFirestore
 
 struct AnimatedDashboardHomeView: View {
 
     @StateObject private var vm = FirebaseDashboardViewModel()
     @ObservedObject private var lm = LocalizationManager.shared
 
+    // SwiftData query — reactive, no network needed
+    @Query(filter: #Predicate<LocalExpenseLog> { $0.syncStatus != "pendingDelete" },
+           sort: \LocalExpenseLog.date,
+           order: .reverse)
+    private var localLogs: [LocalExpenseLog]
+
     @State private var isRefreshing = false
-    @State private var hasAppeared = false
 
     
     // Chart colors
@@ -28,41 +33,26 @@ struct AnimatedDashboardHomeView: View {
         NavigationStack {
             ScrollView {
                 LazyVStack(spacing: 20) {
-                    if vm.isLoading {
-                        loadingView
-                    } else if !vm.expenseLogs.isEmpty {
+                    if !vm.expenseLogs.isEmpty {
                         animatedContentView()
                     } else {
                         emptyStateView
                     }
                 }
                 .padding()
-                
             }
             .navigationTitle(lm.L(.dashboard))
             .refreshable {
                 await refreshData()
             }
         }
-
+        .offlineBanner()
+        // Push SwiftData results into the VM whenever they change
+        .onChange(of: localLogs) { _, newLogs in
+            vm.updateExpenseLogs(newLogs.map { $0.toExpenseLog() })
+        }
         .onAppear {
-            if hasAppeared {
-                vm.fetchExpenseLogs()
-            }
-            hasAppeared = true
-        }
-        .onDisappear {
-            vm.removeListener()
-        }
-        .task {
-            if vm.expenseLogs.isEmpty {
-                vm.setupListener()
-            }
-        }
-        .alert(lm.L(.error), isPresented: $vm.showErrorAlert) {
-            Button(lm.L(.ok), role: .cancel) { }
-        } message: {
-            Text(vm.errorMessage)
+            vm.updateExpenseLogs(localLogs.map { $0.toExpenseLog() })
         }
     }
     
@@ -293,8 +283,9 @@ struct AnimatedDashboardHomeView: View {
     // MARK: - Refresh Handler
     private func refreshData() async {
         isRefreshing = true
-        vm.fetchExpenseLogs()
-        try? await Task.sleep(nanoseconds: 500_000_000) // Small delay
+        // Trigger a Firestore sync if online; SwiftData @Query will update the UI automatically
+        SyncManager.shared.syncPendingChanges()
+        try? await Task.sleep(nanoseconds: 500_000_000)
         isRefreshing = false
     }
 }

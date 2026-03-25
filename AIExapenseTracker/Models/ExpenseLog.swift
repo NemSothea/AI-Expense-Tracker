@@ -8,7 +8,7 @@
 import Foundation
 import FirebaseFirestore
 
-struct ExpenseLog : Codable, Identifiable, Equatable {
+struct ExpenseLog : Codable, Identifiable, Equatable,Sendable {
     
     var id          : String
     var name        : String

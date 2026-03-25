@@ -11,7 +11,7 @@ import Observation
 import Foundation
 
 @Observable
-class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView> {
+class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView>, @unchecked Sendable {
     
     let functionsManager: FunctionsManager
     let db = DatabaseManager.shared
@@ -20,22 +20,34 @@ class AIAssistantTextChatViewModel: TextChatViewModel<AIAssistantResponseView> {
         self.functionsManager = .init(apiKey: apiKey)
         super.init(senderImage: _senderImage, botImage: _botImage, model: model, apiKey: apiKey)
         self.functionsManager.addLogConfirmationCallback = { [weak self] isConfirmed, props in
-            guard let self, let id = props.messageID, let index = self.messages.firstIndex(where: { $0.id == id }) else {
-                return
+            // The callback is invoked from a nonisolated context, so hop to
+            // MainActor for all UI state mutations and the @MainActor db.add.
+            Task { @MainActor [weak self] in
+                guard let self,
+                      let id = props.messageID,
+                      let index = self.messages.firstIndex(where: { $0.id == id }) else { return }
+
+                var messageRow = self.messages[index]
+                let text: String
+                if isConfirmed {
+                    self.db.add(log: props.log)
+                    text = "Sure, i've added this log to your expenses list"
+                } else {
+                    text = "Ok, i won't be adding this log"
+                }
+
+                let response = AIAssistantResponse(
+                    text: text,
+                    type: .addExpenseLog(.init(
+                        log: props.log,
+                        messageID: id,
+                        userConfirmation: isConfirmed ? .confirmed : .cancelled,
+                        confirmationCallback: props.confirmationCallback
+                    ))
+                )
+                messageRow.response = .customContent({ AIAssistantResponseView(response: response) })
+                self.messages[index] = messageRow
             }
-            var messageRow = self.messages[index]
-            let text: String
-            if isConfirmed {
-                try? self.db.add(log: props.log)
-                text = "Sure, i've added this log to your expenses list"
-            } else {
-                text = "Ok, i won't be adding this log"
-            }
-            
-            let response = AIAssistantResponse(text: text, type: .addExpenseLog(.init(log: props.log, messageID: id, userConfirmation: isConfirmed ? .confirmed : .cancelled, confirmationCallback: props.confirmationCallback)))
-            
-            messageRow.response = .customContent({ AIAssistantResponseView(response: response) })
-            self.messages[index] = messageRow
         }
     }
     

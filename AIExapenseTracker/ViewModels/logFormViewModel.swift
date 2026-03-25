@@ -41,7 +41,7 @@ class FormViewModel  {
             numberFormatter.currencyCode = logToEdit.currency
         }
     }
-    func save() {
+    @MainActor func save() {
         var log : ExpenseLog
         if let logToEdit {
             log = logToEdit
@@ -55,14 +55,14 @@ class FormViewModel  {
         log.date = self.date
         
         if self.logToEdit == nil {
-            try? db.add(log: log)
+            db.add(log: log)
         }else {
             db.update(log: log)
         }
 
         
     }
-    func delete(log: ExpenseLog) {
+    @MainActor func delete(log: ExpenseLog) {
         db.delete(log: log)
     }
     
