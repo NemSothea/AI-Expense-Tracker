@@ -14,13 +14,21 @@ struct AnimatedDashboardHomeView: View {
     @StateObject private var vm = FirebaseDashboardViewModel()
     @ObservedObject private var lm = LocalizationManager.shared
 
-    // SwiftData query — reactive, no network needed
-    @Query(filter: #Predicate<LocalExpenseLog> { $0.syncStatus != "pendingDelete" },
-           sort: \LocalExpenseLog.date,
-           order: .reverse)
-    private var localLogs: [LocalExpenseLog]
+    // SwiftData query filtered by the active log type — reactive, no network needed
+    @Query private var localLogs: [LocalExpenseLog]
 
     @State private var isRefreshing = false
+
+    init(logType: LogType) {
+        let rawValue = logType.rawValue
+        _localLogs = Query(
+            filter: #Predicate<LocalExpenseLog> {
+                $0.syncStatus != "pendingDelete" && $0.logType == rawValue
+            },
+            sort: \LocalExpenseLog.date,
+            order: .reverse
+        )
+    }
 
     
     // Chart colors

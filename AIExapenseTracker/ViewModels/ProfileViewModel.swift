@@ -52,9 +52,10 @@ final class ProfileViewModel: ObservableObject {
         return f
     }()
 
-    func setupListener() {
+    func setupListener(for logType: LogType = AppSettings.shared.selectedLogType) {
+        listener?.remove()   // tear down any existing listener before re-attaching
         isLoading = true
-        listener = DatabaseManager.shared.logsCollection
+        listener = DatabaseManager.shared.collection(for: logType)
             .order(by: "date", descending: true)
             .addSnapshotListener { [weak self] snapshot, error in
                 guard let self = self else { return }

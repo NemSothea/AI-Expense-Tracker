@@ -22,8 +22,12 @@ final class LocalExpenseLog {
     var amount: Double
     var currency: String
     var date: Date
+    var notes: String?
     var syncStatus: String          // stores SyncStatus.rawValue
     var localModifiedAt: Date
+    /// The Firestore collection this record belongs to (= LogType.rawValue).
+    /// Defaults to "logs" so existing records migrate without data loss.
+    var logType: String = LogType.wife.rawValue
 
     init(
         id: String,
@@ -32,7 +36,9 @@ final class LocalExpenseLog {
         amount: Double,
         currency: String = "USD",
         date: Date,
-        syncStatus: SyncStatus = .pendingUpload
+        notes: String? = nil,
+        syncStatus: SyncStatus = .pendingUpload,
+        logType: LogType = .wife
     ) {
         self.id = id
         self.name = name
@@ -40,15 +46,17 @@ final class LocalExpenseLog {
         self.amount = amount
         self.currency = currency
         self.date = date
+        self.notes = notes
         self.syncStatus = syncStatus.rawValue
         self.localModifiedAt = Date()
+        self.logType = logType.rawValue
     }
 
     // MARK: - Conversion helpers
 
     func toExpenseLog() -> ExpenseLog {
         ExpenseLog(id: id, name: name, category: category,
-                   amount: amount, currency: currency, date: date)
+                   amount: amount, currency: currency, date: date, notes: notes)
     }
 
     func applyRemoteUpdate(from log: ExpenseLog) {
@@ -57,11 +65,16 @@ final class LocalExpenseLog {
         amount = log.amount
         currency = log.currency
         date = log.date
+        notes = log.notes
         syncStatus = SyncStatus.synced.rawValue
         localModifiedAt = Date()
     }
 
-    static func from(_ log: ExpenseLog, syncStatus: SyncStatus = .pendingUpload) -> LocalExpenseLog {
+    static func from(
+        _ log: ExpenseLog,
+        syncStatus: SyncStatus = .pendingUpload,
+        logType: LogType = .wife
+    ) -> LocalExpenseLog {
         LocalExpenseLog(
             id: log.id,
             name: log.name,
@@ -69,7 +82,9 @@ final class LocalExpenseLog {
             amount: log.amount,
             currency: log.currency,
             date: log.date,
-            syncStatus: syncStatus
+            notes: log.notes,
+            syncStatus: syncStatus,
+            logType: logType
         )
     }
 }

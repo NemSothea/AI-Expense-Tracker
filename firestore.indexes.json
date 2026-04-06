@@ -4,14 +4,16 @@
       "collectionGroup": "logs",
       "queryScope": "COLLECTION",
       "fields": [
-        {
-          "fieldPath": "category",
-          "order": "ASCENDING"
-        },
-        {
-          "fieldPath": "amount",
-          "order": "DESCENDING"
-        }
+        { "fieldPath": "category", "order": "ASCENDING" },
+        { "fieldPath": "amount",   "order": "DESCENDING" }
+      ]
+    },
+    {
+      "collectionGroup": "husbandLogs",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "category", "order": "ASCENDING" },
+        { "fieldPath": "amount",   "order": "DESCENDING" }
       ]
     }
   ],

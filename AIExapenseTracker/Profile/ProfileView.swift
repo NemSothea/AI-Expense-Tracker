@@ -11,6 +11,7 @@ struct ProfileView: View {
 
     @StateObject private var vm  = ProfileViewModel()
     @ObservedObject private var lm = LocalizationManager.shared
+    @Environment(AppSettings.self) private var settings
     @State private var expandedMonths: Set<String> = []
 
     private var appVersion: String {
@@ -25,15 +26,21 @@ struct ProfileView: View {
         NavigationStack {
             Form {
                 appHeaderSection
+                logTypeSection
                 languageSection
                 monthlySummarySection
                 aboutSection
             }
             .navigationTitle(lm.L(.profile))
+#if os(iOS)
             .navigationBarTitleDisplayMode(.large)
+#endif
         }
-        .onAppear  { vm.setupListener() }
+        .onAppear  { vm.setupListener(for: settings.selectedLogType) }
         .onDisappear { vm.removeListener() }
+        .onChange(of: settings.selectedLogType) { _, newType in
+            vm.setupListener(for: newType)
+        }
         .alert(lm.L(.error), isPresented: $vm.showError) {
             Button(lm.L(.ok), role: .cancel) {}
         } message: {
@@ -83,6 +90,41 @@ struct ProfileView: View {
                 Spacer()
             }
             .padding(.vertical, 8)
+        }
+    }
+
+    // MARK: - Log Type Section
+
+    @ViewBuilder
+    private var logTypeSection: some View {
+        Section {
+            ForEach(LogType.allCases) { logType in
+                Button {
+                    withAnimation(.spring(response: 0.3, dampingFraction: 0.7)) {
+                        settings.selectedLogType = logType
+                    }
+                } label: {
+                    HStack {
+                        Image(systemName: logType.icon)
+                            .font(.title2)
+                            .frame(width: 28)
+                        Text(logType.displayName)
+                            .foregroundStyle(.primary)
+                        Spacer()
+                        if settings.selectedLogType == logType {
+                            Image(systemName: "checkmark.circle.fill")
+                                .foregroundStyle(.blue)
+                                .transition(.scale.combined(with: .opacity))
+                        }
+                    }
+                }
+            }
+        } header: {
+            Label("Log Owner", systemImage: "person.2.fill")
+        } footer: {
+            Text("Choose whose expense logs to view and manage.")
+                .appFont(.caption2)
+                .foregroundStyle(.secondary)
         }
     }
 

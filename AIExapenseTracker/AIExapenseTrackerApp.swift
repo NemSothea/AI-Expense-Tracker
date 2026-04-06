@@ -39,6 +39,7 @@ struct AIExapenseTrackerApp: App {
             LaunchScreenView()
                 .modelContainer(modelContainer)
                 .environment(NetworkMonitor.shared)
+                .environment(AppSettings.shared)
                 .task {
                     // Wire the sync engine to the container once the scene is ready
                     await MainActor.run {

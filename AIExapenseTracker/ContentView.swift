@@ -11,6 +11,7 @@ struct ContentView: View {
 
     @State var vm = LogListViewModel()
     @ObservedObject private var lm = LocalizationManager.shared
+    @Environment(AppSettings.self) private var settings
 
     @Environment(\.horizontalSizeClass) var horizontalSizeClass
 
@@ -34,14 +35,14 @@ struct ContentView: View {
     var tapView : some View {
         TabView(selection: $mobileTab) {
             NavigationStack {
-                AnimatedDashboardHomeView()
+                AnimatedDashboardHomeView(logType: settings.selectedLogType)
             }
             .tabItem {
                 Label(lm.L(.home), systemImage: "bolt.house.fill")
             }.tag(0)
 
             NavigationStack {
-                LogListContainerView(vm: $vm)
+                LogListContainerView(vm: $vm, logType: settings.selectedLogType)
             }
             .tabItem {
                 Label(lm.L(.expense), systemImage: "tray")
@@ -102,15 +103,15 @@ struct ContentView: View {
         } detail: {
             switch selectedTab {
             case 0:
-                AnimatedDashboardHomeView()
+                AnimatedDashboardHomeView(logType: settings.selectedLogType)
             case 1:
-                LogListContainerView(vm: $vm)
+                LogListContainerView(vm: $vm, logType: settings.selectedLogType)
             case 2:
                 VisionReceiptScannerView()
             case 3:
                 ProfileView()
             default:
-                AnimatedDashboardHomeView()
+                AnimatedDashboardHomeView(logType: settings.selectedLogType)
             }
         }
         .environment(\.font, lm.appBody)

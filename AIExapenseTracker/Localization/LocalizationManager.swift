@@ -224,7 +224,23 @@ extension LK {
     static let amount               = LK(en: "Amount",                        km: "ចំនួនទឹកប្រាក់")
     static let category             = LK(en: "Category",                      km: "ប្រភេទ")
     static let date                 = LK(en: "Date",                          km: "កាលបរិច្ឆេទ")
+    static let notes                = LK(en: "Notes",                         km: "កំណត់ចំណាំ")
+    static let notesPlaceholder    = LK(en: "Add a note (optional)",         km: "បន្ថែមកំណត់ចំណាំ (ស្រេចចិត្ត)")
     static let now                  = LK(en: "Now",                           km: "ឥឡូវ")
+
+    // Name suggestions
+    static let suggestionLunch         = LK(en: "Lunch",                         km: "អាហារថ្ងៃ")
+    static let suggestionDinner        = LK(en: "Dinner",                        km: "អាហារល្ងាច")
+    static let suggestionCoffee        = LK(en: "Coffee",                        km: "កាហ្វេ")
+    static let suggestionGroceries     = LK(en: "Groceries",                     km: "គ្រឿងទេស")
+    static let suggestionTransport     = LK(en: "Transport",                     km: "ការដឹកជញ្ជូន")
+    static let suggestionEntertainment = LK(en: "Entertainment",                 km: "កំសាន្ត")
+    static let suggestionShopping      = LK(en: "Shopping",                      km: "ទិញឥវ៉ាន់")
+    static let suggestionUtilities     = LK(en: "Utilities",                     km: "សេវាសាធារណៈ")
+    static let suggestionRent          = LK(en: "Rent",                          km: "ថ្លៃជួល")
+    static let suggestionFuel          = LK(en: "Fuel",                          km: "សាំង")
+    static let suggestionSnacks        = LK(en: "Snacks",                        km: "អាហារសម្រន់")
+    static let suggestionMedical       = LK(en: "Medical",                       km: "វេជ្ជសាស្ត្រ")
     static let yesterday            = LK(en: "Yesterday",                     km: "ម្សិលមិញ")
     static let lastWeek             = LK(en: "Last Week",                     km: "សប្តាហ៍មុន")
 

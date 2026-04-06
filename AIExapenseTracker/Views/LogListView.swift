@@ -12,12 +12,20 @@ struct LogListView: View {
     @Binding var vm: LogListViewModel
     @ObservedObject private var lm = LocalizationManager.shared
 
-    // All non-deleted records, newest first.
-    // SwiftData keeps this in sync; any change triggers a view re-render.
-    @Query(filter: #Predicate<LocalExpenseLog> { $0.syncStatus != "pendingDelete" },
-           sort: \LocalExpenseLog.date,
-           order: .reverse)
-    private var allLocalLogs: [LocalExpenseLog]
+    // All non-deleted records for the active log type, newest first.
+    @Query private var allLocalLogs: [LocalExpenseLog]
+
+    init(vm: Binding<LogListViewModel>, logType: LogType) {
+        _vm = vm
+        let rawValue = logType.rawValue
+        _allLocalLogs = Query(
+            filter: #Predicate<LocalExpenseLog> {
+                $0.syncStatus != "pendingDelete" && $0.logType == rawValue
+            },
+            sort: \LocalExpenseLog.date,
+            order: .reverse
+        )
+    }
 
     // Convert to ExpenseLog and apply category, search, and sort filters from the VM
     private var visibleLogs: [ExpenseLog] {
@@ -117,8 +125,13 @@ struct LogListView: View {
                                 .contentShape(Rectangle())
                                 .contextMenu {
                                     Button {
-                                        UIPasteboard.general.string =
-                                            "\(log.name) - \(log.amount)$ - \(log.date)"
+                                        let text = "\(log.name) - \(log.amount)$ - \(log.date)"
+#if os(iOS)
+                                        UIPasteboard.general.string = text
+#elseif os(macOS)
+                                        NSPasteboard.general.clearContents()
+                                        NSPasteboard.general.setString(text, forType: .string)
+#endif
                                     } label: {
                                         Label(lm.L(.copy), systemImage: "doc.on.doc.fill")
                                     }

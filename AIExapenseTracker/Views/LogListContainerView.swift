@@ -13,12 +13,23 @@ struct LogListContainerView: View {
     @Binding var vm: LogListViewModel
     @ObservedObject private var lm = LocalizationManager.shared
 
-    @Query(filter: #Predicate<LocalExpenseLog> { $0.syncStatus != "pendingDelete" },
-           sort: \LocalExpenseLog.date,
-           order: .reverse)
-    private var allLocalLogs: [LocalExpenseLog]
+    private let logType: LogType
+    @Query private var allLocalLogs: [LocalExpenseLog]
 
     private var exportLogs: [ExpenseLog] { allLocalLogs.map { $0.toExpenseLog() } }
+
+    init(vm: Binding<LogListViewModel>, logType: LogType) {
+        _vm = vm
+        self.logType = logType
+        let rawValue = logType.rawValue
+        _allLocalLogs = Query(
+            filter: #Predicate<LocalExpenseLog> {
+                $0.syncStatus != "pendingDelete" && $0.logType == rawValue
+            },
+            sort: \LocalExpenseLog.date,
+            order: .reverse
+        )
+    }
 
     var body: some View {
         VStack(spacing: 0) {
@@ -26,7 +37,7 @@ struct LogListContainerView: View {
             Divider()
             SelectSortOrderView(sortType: $vm.sortType, sortOrder: $vm.sortOrder)
             Divider()
-            LogListView(vm: $vm)
+            LogListView(vm: $vm, logType: logType)
         }
         .toolbar {
             // Export button

@@ -6,7 +6,7 @@
 //
 
 import Foundation
-#if canImport(UIKit)
+#if os(iOS)
 import UIKit
 #endif
 
@@ -47,7 +47,7 @@ enum ExportManager {
         let url = FileManager.default.temporaryDirectory
             .appendingPathComponent("expenses_\(dateStamp()).pdf")
 
-#if canImport(UIKit)
+#if os(iOS)
         // A4 page: 595 × 842 pt
         let pageRect = CGRect(x: 0, y: 0, width: 595, height: 842)
         let renderer = UIGraphicsPDFRenderer(bounds: pageRect)
