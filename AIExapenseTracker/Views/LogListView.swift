@@ -101,7 +101,7 @@ struct LogListView: View {
                 }
             }
         }
-        .onChange(of: allLocalLogs) { _, newLogs in
+        .onChange(of: allLocalLogs, initial: true) { _, newLogs in
             vm.hasMoreData = newLogs.count >= vm.pageSize * vm.currentPage
             pushLastExpenseToWidget(newLogs.map { $0.toExpenseLog() })
         }

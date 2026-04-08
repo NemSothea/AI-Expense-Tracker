@@ -43,6 +43,7 @@ struct ContentView: View {
 
             NavigationStack {
                 LogListContainerView(vm: $vm, logType: settings.selectedLogType)
+                    .id(settings.selectedLogType)
             }
             .tabItem {
                 Label(lm.L(.expense), systemImage: "tray")
@@ -106,6 +107,7 @@ struct ContentView: View {
                 AnimatedDashboardHomeView(logType: settings.selectedLogType)
             case 1:
                 LogListContainerView(vm: $vm, logType: settings.selectedLogType)
+                    .id(settings.selectedLogType)
             case 2:
                 VisionReceiptScannerView()
             case 3:
